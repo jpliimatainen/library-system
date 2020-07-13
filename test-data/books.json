@@ -1,0 +1,74 @@
+[
+    {
+        "name": "Bookname 1",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
+        "isbn": "978-951-98548-9-2",
+        "pages": 200,
+        "authorId": 1,
+        "genreId": 1
+    },
+    {
+        "name": "Bookname 2",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
+        "isbn": "978-951-985258-9-2",
+        "pages": 125,
+        "authorId": 1,
+        "genreId": 2
+    },
+    {
+        "name": "Bookname 3",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
+        "isbn": "978-951-01548-9-2",
+        "pages": 230,
+        "authorId": 1,
+        "genreId": 3
+    },
+    {
+        "name": "Bookname 4",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
+        "isbn": "978-951-98548-6-1",
+        "pages": 189,
+        "authorId": 2,
+        "genreId": 1
+    },
+    {
+        "name": "Bookname 5",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
+        "isbn": "978-951-11248-9-2",
+        "pages": 180,
+        "authorId": 2,
+        "genreId": 2
+    },
+    {
+        "name": "Bookname 6",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
+        "isbn": "978-951-98579-9-2",
+        "pages": 200,
+        "authorId": 2,
+        "genreId": 3
+    },
+    {
+        "name": "Bookname 7",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
+        "isbn": "978-964-11548-9-2",
+        "pages": 110,
+        "authorId": 3,
+        "genreId": 1
+    },
+    {
+        "name": "Bookname 8",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
+        "isbn": "978-951-753118-7-0",
+        "pages": 80,
+        "authorId": 3,
+        "genreId": 2
+    },
+    {
+        "name": "Bookname 9",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
+        "isbn": "978-714-98533-9-2",
+        "pages": 486,
+        "authorId": 3,
+        "genreId": 3
+    }
+]
