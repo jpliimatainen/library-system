@@ -65,16 +65,10 @@ module.exports = {
         const id = req.params.genreId;
 
         // get PUT data
-        const { genreId, classification, name } = req.body;
-
-        if (parseInt(id) !== genreId) {
-            // ids not match
-            res.status(400).json({ success: false, message: 'Genre ids not match.' });
-            return;
-        }
+        const { classification, name } = req.body;
 
         const inputGenre = new Genre(
-            genreId,
+            id,
             classification,
             name,
             null,

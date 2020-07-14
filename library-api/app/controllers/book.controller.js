@@ -71,16 +71,10 @@ module.exports = {
         const id = req.params.bookId;
 
         // get PUT data
-        const { bookId, name, description, isbn, pages, authorId, genreId } = req.body;
-        
-        if (parseInt(id) !== bookId) {
-            // ids not match
-            res.status(400).json({ success: false, message: 'Book ids not match.' });
-            return;
-        }
+        const { name, description, isbn, pages, authorId, genreId } = req.body;
 
         const inputBook = new Book(
-            bookId,
+            id,
             name,
             description,
             isbn,

@@ -65,16 +65,10 @@ module.exports = {
         const id = req.params.authorId;
 
         // get PUT data
-        const { authorId, firstname, lastname } = req.body;
-
-        if (parseInt(id) !== authorId) {
-            // ids not match
-            res.status(400).json({ success: false, message: 'Author ids not match.' });
-            return;
-        }
+        const { firstname, lastname } = req.body;
 
         const inputAuthor = new Author(
-            authorId,
+            id,
             firstname,
             lastname,
             null,
