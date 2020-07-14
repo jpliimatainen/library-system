@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+
 const dbQuery = require('../models/db.model');
 const commonHelpers = require('../helpers/common.helpers');
 const User = require('../models/User');
@@ -57,7 +59,40 @@ const getRoleById = id => {
     return dbQuery(query, [id]);
 };
 
+// create a hashed password
+const hashed = (password, saltRounds) => {
+    return new Promise((resolve, reject) => {
+        bcrypt.genSalt(saltRounds, function(err, salt) {
+            bcrypt.hash(password, salt, function(err, hash) {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                }
+                else {
+                    resolve(hash);
+                }
+            });
+        });
+    });
+};
+
 module.exports = {
+
+    createHashedUser: async (email, password, roleId) => {
+        // create a hashed password
+        const hashedPw = await hashed(password, 10);
+
+        return new User(
+            null,
+            email,
+            hashedPw,
+            null,
+            null,
+            roleId,
+            null,
+            null
+        );
+    },
 
     createUser: async user => {
         // create a new user

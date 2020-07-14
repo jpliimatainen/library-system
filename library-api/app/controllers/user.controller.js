@@ -1,46 +1,16 @@
-const bcrypt = require('bcryptjs');
-
 const helpers = require('../helpers/user.helpers');
 const User = require('../models/User');
-
-// create a hashed password
-const hashed = (password, saltRounds) => {
-    return new Promise((resolve, reject) => {
-        bcrypt.genSalt(saltRounds, function(err, salt) {
-            bcrypt.hash(password, salt, function(err, hash) {
-                if (err) {
-                    console.log(err);
-                    reject(err);
-                }
-                else {
-                    resolve(hash);
-                }
-            });
-        });
-    });
-};
 
 module.exports = {
 
     createUser: async (req, res) => {
         // get POST data
         const { email, password, roleId } = req.body;
-
-        // create a hashed password
-        const hashedPw = await hashed(password, 10);
-
-        const inputUser = new User(
-            null,
-            email,
-            hashedPw,
-            null,
-            null,
-            roleId,
-            null,
-            null
-        );
         
         try {
+            // create a password hashed user object
+            const inputUser = await helpers.createHashedUser(email, password, roleId);
+
             // create a new user
             const outputUser = await helpers.createUser(inputUser);
 

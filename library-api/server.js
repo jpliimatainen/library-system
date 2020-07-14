@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 
 app.use(authorRoutes);
 app.use(bookRoutes);
-//app.use(customerRoutes);
+app.use(customerRoutes);
 app.use(genreRoutes);
 app.use(userRoutes);
 
