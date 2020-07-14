@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const ctrl = require('../controllers/book.controller');
-const commonMiddlewares = require('../middlewares/common.middlewares');
+const bookMiddlewares = require('../middlewares/book.middlewares');
 
 router.route('/api/books')
     .get(ctrl.getBooks)
@@ -12,7 +12,7 @@ router.route('/api/books/:bookId')
     .get(ctrl.getBook)
     .put(
         [
-            commonMiddlewares.checkUserIdMismatch
+            bookMiddlewares.checkBookIdMismatch
         ],
         ctrl.updateBook
     )

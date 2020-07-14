@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const ctrl = require('../controllers/author.controller');
-const commonMiddlewares = require('../middlewares/common.middlewares');
+const authorMiddlewares = require('../middlewares/author.middlewares');
 
 router.route('/api/authors')
     .get(ctrl.getAuthors)
@@ -12,7 +12,7 @@ router.route('/api/authors/:authorId')
     .get(ctrl.getAuthor)
     .put(
         [
-            commonMiddlewares.checkUserIdMismatch
+            authorMiddlewares.checkAuthorIdMismatch
         ],
         ctrl.updateAuthor
     )

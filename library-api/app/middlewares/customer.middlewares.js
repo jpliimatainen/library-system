@@ -2,6 +2,20 @@ const helpers = require('../helpers/customer.helpers');
 
 module.exports = {
 
+    checkCustomerIdMismatch: (req, res, next) => {
+        // get the customer ids
+        const id = req.params.customerId;
+        const { customerId } = req.body;
+
+        if (parseInt(id) !== customerId) {
+            // ids not match
+            res.status(400).json({ success: false, message: 'Customer ids not match.' });
+            return;
+        }
+
+        next();
+    },
+
     checkPasswordMismatch: (req, res, next) => {
         const { password, passwordConfirmed } = req.body;
 
@@ -19,8 +33,8 @@ module.exports = {
         const id = req.params.customerId || null;
 
         try {
-            // load the requested customer
-            const customers = await helpers.getCustomers(email, null);
+            // load the customer with the email
+            const customers = await helpers.getCustomerByEmail(email);
 
             if (customers.length > 0) {
                 if (id === null) { // inserting a new customer

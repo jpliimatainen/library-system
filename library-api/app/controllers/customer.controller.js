@@ -75,23 +75,27 @@ module.exports = {
         const id = req.params.customerId;
 
         // get PUT data
-        const { email, password, roleId } = req.body;
-
-        // create a hashed password
-        const hashedPw = await hashed(password, 10);
-
-        const inputCustomer = new Customer(
-            id,
-            email,
-            hashedPw,
-            null,
-            null,
-            roleId,
-            null,
-            null
-        );
+        const { email, password, firstname, lastname, streetAddress, postCode } = req.body;
 
         try {
+            // create a password hashed user object
+            const inputUser = await userHelpers.createHashedUser(email, password, 2);
+
+            // update the user
+            const outputUser = await userHelpers.updateUser(inputUser);
+
+            const inputCustomer = new Customer(
+                id,
+                firstname,
+                lastname,
+                streetAddress,
+                postCode,
+                null,
+                null,
+                outputUser.userId,
+                null
+            );
+
             // update the customer
             const outputCustomer = await helpers.updateCustomer(inputCustomer);
 

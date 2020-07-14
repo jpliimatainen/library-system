@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 
 const ctrl = require('../controllers/customer.controller');
-const commonMiddlewares = require('../middlewares/common.middlewares');
 const customerMiddlewares = require('../middlewares/customer.middlewares');
 
 router.route('/api/customers')
@@ -19,7 +18,7 @@ router.route('/api/customers/:customerId')
     .get(ctrl.getCustomer)
     .put(
         [
-            commonMiddlewares.checkCustomerIdMismatch,
+            customerMiddlewares.checkCustomerIdMismatch,
             customerMiddlewares.checkPasswordMismatch, 
             customerMiddlewares.checkDuplicateEmail
         ],

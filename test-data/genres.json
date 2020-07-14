@@ -1,14 +1,14 @@
 [
     {
         "classification": "10.70",
-        "name": "Genre 1"
+        "name": "Math"
     },
     {
         "classification": "53.41",
-        "name": "Genre 2"
+        "name": "Philosophy"
     },
     {
         "classification": "89.90",
-        "name": "Genre 3"
+        "name": "Art"
     }
 ]

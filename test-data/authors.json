@@ -1,14 +1,14 @@
 [
     {
-        "firstname": "Afirstname1",
-        "lastname": "Alastname1"
+        "firstname": "Matti",
+        "lastname": "Heikkilä"
     },
     {
-        "firstname": "Afirstname2",
-        "lastname": "Alastname2"
+        "firstname": "Asko",
+        "lastname": "Liimatainen"
     },
     {
-        "firstname": "Afirstname3",
-        "lastname": "Alastname3"
+        "firstname": "Maija",
+        "lastname": "Jokinen"
     }
 ]

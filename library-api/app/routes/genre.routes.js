@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const ctrl = require('../controllers/genre.controller');
-const commonMiddlewares = require('../middlewares/common.middlewares');
+const genreMiddlewares = require('../middlewares/genre.middlewares');
 
 router.route('/api/genres')
     .get(ctrl.getGenres)
@@ -12,7 +12,7 @@ router.route('/api/genres/:genreId')
     .get(ctrl.getGenre)
     .put(
         [
-            commonMiddlewares.checkUserIdMismatch
+            genreMiddlewares.checkGenreIdMismatch
         ],
         ctrl.updateGenre
     )
