@@ -1,3 +1,7 @@
+#private directories and files
+test-data/
+system-description.odt
+
 # Logs
 logs
 *.log

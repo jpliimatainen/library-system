@@ -1,14 +1,22 @@
 [
     {
-        "classification": "10.70",
-        "name": "Math"
+        "classification": "14.8",
+        "name": "Ihmissuhteiden psykologia"
     },
     {
-        "classification": "53.41",
-        "name": "Philosophy"
+        "classification": "23.8",
+        "name": "Kristillinen etiikka"
     },
     {
-        "classification": "89.90",
-        "name": "Art"
+        "classification": "25.4",
+        "name": "Sielunhoito"
+    },
+    {
+        "classification": "51",
+        "name": "Matematiikka"
+    },
+    {
+        "classification": "84.2",
+        "name": "Suomenkielinen kertomakirjallisuus"
     }
 ]

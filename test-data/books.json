@@ -1,74 +1,74 @@
 [
     {
-        "name": "Lorem ipsum",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
-        "isbn": "978-951-98548-9-2",
-        "pages": 200,
+        "name": "Rakkautta etsimässä",
+        "description": "Kyky antaa ja vastaanottaa rakkautta löytyy, kun päästään ihmisen rakkaudettomuuden juurille. Joskus toipumismatka ulottuu lapsuuteen asti, joskus syyt löytyvät lähempää.",
+        "isbn": " 952-475-083-X",
+        "pages": 152,
         "authorId": 1,
         "genreId": 1
     },
     {
-        "name": "sed do eiusmod",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
-        "isbn": "978-951-985258-9-2",
-        "pages": 125,
+        "name": "Isänikävä",
+        "description": "Turvallinen isä on välttämätön lapsen kehityksen kannalta. Isän tulisi antaa niin tytölle kuin pojallekin miehen malli rakastamalla ehdoitta. Turvallisessa isäsuhteessa lapsi saa ilmaista vapaasti kielteisiäkin tunteita, silloin hän yleensä osaa ilmaista myös rakkautta. Lisäksi tyttö tarvitsee isän läsnäoloa, jotta hän voisi naisena onnistua myös seksuaalisuhteessa mieheen: poika tarvitsee isän läsnäoloa, jotta hän voisi vartuttuaan muun muassa olla luontevasti toisten miesten seurassa. On kuitenkin paljon niitä, jotka vielä aikuisina etsivät epätoivoisesti isän hyväksyntää ja rakkautta. Heillä ei ehkä ole ollut isää, tai isä on ollut etäinen, torjuva tai pelottava. He eivät välttämättä ole tiedostaneet isänikäväänsä, mutta se leimaa heidän elämäänsä ja ihmissuhteitaan. Isänikävän aiheuttamasta ahdistuksesta voi vapautua. Tämä kirja ohjaa ymmärtämään sitä ja avaa tietä sen käsittelyyn. Kirjoittaja muistuttaa myös taivaallisen Isän sylistä, joka on avoin kaikille ja josta sieluumme virtaa armoa ja rakkautta.",
+        "isbn": "978-952-475-307-4",
+        "pages": 170,
         "authorId": 1,
         "genreId": 2
     },
     {
-        "name": "Eget felis",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
-        "isbn": "978-951-01548-9-2",
-        "pages": 230,
+        "name": "Kivun kasvot",
+        "description": "Seppo jokisen esikoisteos Rikotusta eheä ilmestyi vuonna 1994. Hänen pitämänsä sielunhoidon luennot olivat sen pohjana, samoin kuin tämänkin kirjan. Kivun kasvot käsittelee nimensä mukaisesti erilaisia kipupisteitä, arkojakin asioita, joista vasta viime vuosina on uskallettu avoimemmin puhua, kuten homoseksuaalisuus ja insesti. Kipua aiheuttavat lapsuudessa koetut traumat, itsetunnon ja identiteetin vammat, sairauden ja heikkouden kohtaaminen itsessä ja muissa. Jokinen puhuu myös tunteiden syväjäästä, rakastamisen vaikeudesta, turvattomuudentunteesta ja korjaavan hoidon mahdollisuuksista. Menneisyyden tunnevammoista on mahdollista parantua, kunhan sekä hoitaja että hoidettava suostuvat pitkäaikaiseen hoitosuhteeseen. Kirja korostaa parantavan rukouksen merkitystä. Kaiken paranemisen pohjana ja perustana on nöyrä asenne omiin ja toisten kipuihin, heikkouden tunnustaminen ja Jumalalta armon pyytäminen.",
+        "isbn": "978-952-475-490-3",
+        "pages": 141,
         "authorId": 1,
         "genreId": 3
     },
     {
-        "name": "dolor sit",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
-        "isbn": "978-951-98548-6-1",
-        "pages": 189,
-        "authorId": 2,
-        "genreId": 1
-    },
-    {
-        "name": "labore et dolore",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
-        "isbn": "978-951-11248-9-2",
-        "pages": 180,
-        "authorId": 2,
-        "genreId": 2
-    },
-    {
-        "name": "adipiscing elit",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
-        "isbn": "978-951-98579-9-2",
+        "name": "Reaalimuuttujan analyysi",
+        "description": "Matematiikka, differentiaalilaskenta, integraalilaskenta, matemaattinen analyysi, muuttujat, lukujonot, funktiot",
+        "isbn": "951-672-255-5",
         "pages": 200,
         "authorId": 2,
-        "genreId": 3
+        "genreId": 4
     },
     {
-        "name": "lobortis mattis",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
-        "isbn": "978-964-11548-9-2",
-        "pages": 110,
-        "authorId": 3,
-        "genreId": 1
+        "name": "Algebra ja geometria",
+        "description": "Algrebra, geometria",
+        "isbn": "951-672-235-0",
+        "pages": 201,
+        "authorId": 2,
+        "genreId": 4
     },
     {
-        "name": "aliquam faucibus",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
-        "isbn": "978-951-753118-7-0",
-        "pages": 80,
-        "authorId": 3,
-        "genreId": 2
+        "name": "Vaellusretkiä matematiikkaan",
+        "description": "Matematiikkaa ja johdonmukaista ajattelua pidetään yleisesti tärkeänä modernin yhteiskunnan ilmiöiden ymmärtämiselle ja hallitsemiselle. Kyse ei ole vain ammattilaisen työkaluista vaan myös jokaisen kansalaisen tarpeista: miten maailma toimii ja miten sitä voi hahmottaa. Kirjan tarkoituksena on täydentää koulun antamaa mielikuvaa sekä matematiikan rakenteista että niiden hyödyntämisestä eri yhteyksissä. Sisältönä on 25 erillistä artikkelia, jotka voi lukea mielenkiinnon mukaan missä tahansa järjestyksessä. Ymmärtämiseen pääpiirteissään riittää lukion pitkä tai lyhyt matematiikka. Kaikki ei varmastikaan heti aukea, mutta ongelmakohtiin voi halutessaan palata myöhemmin. Apuna on 172 havainnollistavaa kuvaa. Kirjoittaja Simo Kivelä on Teknillisen korkeakoulun (Aalto-yliopiston edeltäjän) emerituslehtori, joka on vuosikymmenien ajan opettanut matematiikkaa teekkareille. Eläkkeelle jäätyään hän on edelleen ollut kiinnostunut matematiikan opettamisesta sekä koulu- että yliopistotasolla.",
+        "isbn": "978-952-93-8335-1",
+        "pages": 210,
+        "authorId": 2,
+        "genreId": 4
     },
     {
-        "name": "eiusmod tempor",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Sit amet est placerat in egestas erat imperdiet. Augue lacus viverra vitae congue eu consequat ac felis.",
-        "isbn": "978-714-98533-9-2",
-        "pages": 486,
+        "name": "Nälkämäki",
+        "description": "",
+        "isbn": "951-20-0289-2",
+        "pages": 557,
         "authorId": 3,
-        "genreId": 3
+        "genreId": 5
+    },
+    {
+        "name": "Ihmisiä telineillä",
+        "description": "",
+        "isbn": "951-20-4677-6",
+        "pages": 491,
+        "authorId": 3,
+        "genreId": 5
+    },
+    {
+        "name": "Iijoen kutsu",
+        "description": "",
+        "isbn": "951-20-3694-0",
+        "pages": 648,
+        "authorId": 3,
+        "genreId": 5
     }
 ]
