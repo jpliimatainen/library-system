@@ -6,13 +6,23 @@ const bookMiddlewares = require('../middlewares/book.middlewares');
 
 router.route('/api/books')
     .get(ctrl.getBooks)
-    .post(ctrl.createBook);
+    .post(
+        [
+            bookMiddlewares.checkEmptyFields,
+            bookMiddlewares.checkIntegrityErrors,
+            bookMiddlewares.checkDuplicateBook
+        ],
+        ctrl.createBook
+    );
 
 router.route('/api/books/:bookId')
     .get(ctrl.getBook)
     .put(
         [
-            bookMiddlewares.checkBookIdMismatch
+            bookMiddlewares.checkBookIdMismatch,
+            bookMiddlewares.checkEmptyFields,
+            bookMiddlewares.checkIntegrityErrors,
+            bookMiddlewares.checkDuplicateBook
         ],
         ctrl.updateBook
     )

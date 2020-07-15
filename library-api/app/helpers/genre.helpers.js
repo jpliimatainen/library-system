@@ -23,8 +23,8 @@ const getGenresByParams = (classification, name) => {
         + "FROM genres WHERE 1 = 1";
 
     if (classification !== null && classification !== undefined) {
-        query += " AND UPPER(classification) LIKE ?";
-        params.push('%' + classification.toUpperCase() + '%');
+        query += " AND UPPER(classification) = ?";
+        params.push(classification.toUpperCase());
     }
     if (name !== null && name !== undefined) {
         query += " AND UPPER(name) LIKE ?";

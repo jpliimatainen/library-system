@@ -124,9 +124,10 @@ module.exports = {
         );
     },
 
-    getBooks: async (name, isbn, authorId, genreId) => {
+    getBooks: async (name, description, isbn, authorId, genreId) => {
         // load the requested books
-        const result = await getBooksByParams(name, isbn, authorId, genreId);
+        const result = await getBooksByParams(name, description, isbn, authorId, genreId);
+        
         const books = [];
         let author, genre = {};
         

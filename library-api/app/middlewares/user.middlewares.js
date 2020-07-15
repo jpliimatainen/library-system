@@ -29,6 +29,7 @@ module.exports = {
 
     checkDuplicateEmail: async (req, res, next) => {
         const { email } = req.body;
+        
         // get the user id (if set)
         const id = req.params.userId || null;
 

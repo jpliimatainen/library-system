@@ -6,16 +6,28 @@ const genreMiddlewares = require('../middlewares/genre.middlewares');
 
 router.route('/api/genres')
     .get(ctrl.getGenres)
-    .post(ctrl.createGenre);
+    .post(
+        [
+            genreMiddlewares.checkEmptyFields,
+            genreMiddlewares.checkDuplicateGenre
+        ],
+        ctrl.createGenre
+    );
 
 router.route('/api/genres/:genreId')
     .get(ctrl.getGenre)
     .put(
         [
-            genreMiddlewares.checkGenreIdMismatch
+            genreMiddlewares.checkGenreIdMismatch,
+            genreMiddlewares.checkEmptyFields,
+            genreMiddlewares.checkDuplicateGenre
         ],
         ctrl.updateGenre
     )
-    .delete(ctrl.deleteGenre);
+    .delete(
+        [
+            genreMiddlewares.checkIntegrityError
+        ],
+        ctrl.deleteGenre);
 
 module.exports = router;
