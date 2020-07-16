@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs');
 
 const dbQuery = require('../models/db.model');
 const commonHelpers = require('../helpers/common.helpers');
+
+const Role = require('../models/Role');
 const User = require('../models/User');
 
 const insertUser = user => {
@@ -38,9 +40,9 @@ const getUsersByParams = (email, roleId) => {
 };
 
 const editUser = user => {
-    const query = "UPDATE users SET email = ?, password = ?, updated_at =" 
+    const query = "UPDATE users SET email = ?, password = ?, updated_at ="
         + " CURRENT_TIMESTAMP(), role_id = ? WHERE user_id = ?";
-    
+
     // execute an update query
     return dbQuery(query, [user.email, user.password, user.roleId, user.id]);
 };
@@ -59,11 +61,19 @@ const getRoleById = id => {
     return dbQuery(query, [id]);
 };
 
+const getUserWithPassword = email => {
+    const query = "SELECT user_id, email, password, created_at, " 
+        + "updated_at, role_id FROM users WHERE email = ?";
+
+    // execute a select query
+    return dbQuery(query, [email]);
+}
+
 // create a hashed password
 const hashed = (password, saltRounds) => {
     return new Promise((resolve, reject) => {
-        bcrypt.genSalt(saltRounds, function(err, salt) {
-            bcrypt.hash(password, salt, function(err, hash) {
+        bcrypt.genSalt(saltRounds, function (err, salt) {
+            bcrypt.hash(password, salt, function (err, hash) {
                 if (err) {
                     console.log(err);
                     reject(err);
@@ -72,6 +82,21 @@ const hashed = (password, saltRounds) => {
                     resolve(hash);
                 }
             });
+        });
+    });
+};
+
+// compare an input password with a hashed one
+const compareWithHashed = (password, hash) => {
+    return new Promise((resolve, reject) => {
+        bcrypt.compare(password, hash, function (err, res) {
+            if (err) {
+                console.log(err);
+                reject(err);
+            }
+            else {
+                resolve(res);
+            }
         });
     });
 };
@@ -103,7 +128,8 @@ module.exports = {
         const created = result[0];
 
         // get the role of the user
-        const role = await getRoleById(created.role_id);
+        result = await getRoleById(created.role_id);
+        const role = result[0];
 
         return new User(
             created.user_id,
@@ -112,18 +138,24 @@ module.exports = {
             created.created_at,
             created.updated_at,
             created.role_id,
-            role[0],
+            new Role(
+                role.role_id,
+                role.name,
+                role.created_at,
+                role.updated_at
+            ),
             null
         );
     },
 
     getUser: async id => {
         // load the requested user
-        const result = await getUserById(id);
+        let result = await getUserById(id);
         const loaded = result[0];
 
         // get the role of the user
-        const role = await getRoleById(loaded.role_id);
+        result = await getRoleById(loaded.role_id);
+        const role = result[0];
 
         return new User(
             loaded.user_id,
@@ -132,9 +164,30 @@ module.exports = {
             loaded.created_at,
             loaded.updated_at,
             loaded.role_id,
-            role[0],
+            new Role(
+                role.role_id,
+                role.name,
+                role.created_at,
+                role.updated_at
+            ),
             null
         );
+    },
+
+    getRole: async roleId => {
+        const result = await getRoleById(roleId);
+
+        if (result.length > 0) {
+            return new Role(
+                result[0].role_id,
+                result[0].name,
+                result[0].created_at,
+                result[0].updated_at
+            );
+        }
+
+        // not a role found
+        return null;
     },
 
     getUsers: async (email, roleId) => {
@@ -155,7 +208,12 @@ module.exports = {
                     element.created_at,
                     element.updated_at,
                     element.role_id,
-                    role[0],
+                    new Role(
+                        role[0].role_id,
+                        role[0].name,
+                        role[0].created_at,
+                        role[0].updated_at
+                    ),
                     null
                 )
             );
@@ -186,7 +244,12 @@ module.exports = {
                 updated.created_at,
                 updated.updated_at,
                 updated.role_id,
-                role[0],
+                new Role(
+                    role[0].role_id,
+                    role[0].name,
+                    role[0].created_at,
+                    role[0].updated_at
+                ),
                 null
             );
         }
@@ -197,5 +260,39 @@ module.exports = {
         const result = await removeUser(id);
 
         return result.affectedRows;
+    },
+
+    login: async (email, password) => {
+        let result = await getUserWithPassword(email);
+
+        if (result.length === 0) { // user not found
+            return null;
+        }
+
+        const loaded = result[0];
+        if (!compareWithHashed(password, loaded.password)) {
+            // passwords not match
+            return null;
+        }
+
+        // get the role of the user
+        result = await getRoleById(loaded.role_id);
+        const role = result[0];
+
+        return new User(
+            loaded.user_id,
+            loaded.email,
+            null,
+            loaded.created_at,
+            loaded.updated_at,
+            loaded.role_id,
+            new Role(
+                role.role_id,
+                role.name,
+                role.created_at,
+                role.updated_at
+            ),
+            null
+        );
     }
 };

@@ -28,6 +28,7 @@ router.route('/api/genres/:genreId')
         [
             genreMiddlewares.checkIntegrityError
         ],
-        ctrl.deleteGenre);
+        ctrl.deleteGenre
+    );
 
 module.exports = router;

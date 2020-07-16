@@ -10,8 +10,7 @@ module.exports = {
 
         if (parseInt(id) !== bookId) {
             // ids not match
-            res.status(400).json({ success: false, message: 'Book ids not match.' });
-            return;
+            return res.status(400).json({ success: false, message: 'Book ids not match.' });
         }
 
         next();
@@ -32,8 +31,7 @@ module.exports = {
 
         if (emptyFields.length > 0) {
             // empty field(s) exist(s)
-            res.status(400).json({ success: false, fields: emptyFields, message: 'Fields cannot be empty' });
-            return;
+            return res.status(400).json({ success: false, fields: emptyFields, message: 'Fields cannot be empty' });
         }
 
         next();
@@ -51,14 +49,12 @@ module.exports = {
             
             if (books.length > 0) {
                 if (id === null) { // inserting a new book
-                    res.status(400).json({ success: false, message: 'A book exists with the given isbn!' });
-                    return;
+                    return res.status(400).json({ success: false, message: 'A book exists with the given isbn!' });
                 }
                 else { // updating an book
                     if (books[0].id !== parseInt(id)) {
                         // another book having the same isbn
-                        res.status(400).json({ success: false, message: 'A book exists with the given isbn!' });
-                        return;
+                        return res.status(400).json({ success: false, message: 'A book exists with the given isbn!' });
                     }
                 }
             }
@@ -67,7 +63,7 @@ module.exports = {
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Fetching the books failed!' });
+            return res.status(400).json({ success: false, message: 'Fetching the books failed!' });
         }
     },
 
@@ -80,7 +76,7 @@ module.exports = {
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'An invalid author id given!' });
+            return res.status(400).json({ success: false, message: 'An invalid author id given!' });
         }
 
         try {
@@ -91,7 +87,7 @@ module.exports = {
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'An invalid genre id given!' });
+            return res.status(400).json({ success: false, message: 'An invalid genre id given!' });
         }
     }
 };

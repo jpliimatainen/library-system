@@ -9,8 +9,7 @@ module.exports = {
 
         if (parseInt(id) !== authorId) {
             // ids not match
-            res.status(400).json({ success: false, message: 'Author ids not match.' });
-            return;
+            return res.status(400).json({ success: false, message: 'Author ids not match.' });
         }
 
         next();
@@ -31,8 +30,7 @@ module.exports = {
 
         if (emptyFields.length > 0) {
             // empty field(s) exist(s)
-            res.status(400).json({ success: false, fields: emptyFields, message: 'Fields cannot be empty' });
-            return;
+            return res.status(400).json({ success: false, fields: emptyFields, message: 'Fields cannot be empty' });
         }
 
         next();
@@ -50,14 +48,12 @@ module.exports = {
 
             if (authors.length > 0) {
                 if (id === null) { // inserting a new author
-                    res.status(400).json({ success: false, message: 'An author exists with the given name!' });
-                    return;
+                    return res.status(400).json({ success: false, message: 'An author exists with the given name!' });
                 }
                 else { // updating an author
                     if (authors[0].id !== parseInt(id)) {
                         // another author having the same name
-                        res.status(400).json({ success: false, message: 'An author exists with the given name!' });
-                        return;
+                        return res.status(400).json({ success: false, message: 'An author exists with the given name!' });
                     }
                 }
             }
@@ -65,7 +61,7 @@ module.exports = {
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Fetching the authors failed!' });
+            return res.status(400).json({ success: false, message: 'Fetching the authors failed!' });
         }
     },
 
@@ -78,14 +74,13 @@ module.exports = {
             const books = await bookHelpers.getBooks(null, null, id, null);
 
             if (books.length > 0) { 
-                res.status(400).json({ success: false, message: 'Book(s) exist(s) for the author!' });
-                return;
+                return res.status(400).json({ success: false, message: 'Book(s) exist(s) for the author!' });
             }
             next();
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Fetching the books failed!' });
+            return res.status(400).json({ success: false, message: 'Fetching the books failed!' });
         }
     }
 };

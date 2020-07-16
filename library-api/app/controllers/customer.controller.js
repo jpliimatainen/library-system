@@ -7,7 +7,7 @@ module.exports = {
     createCustomer: async (req, res) => {
         // get POST data
         const { email, password, firstname, lastname, streetAddress, postCode } = req.body;
-        
+
         try {
             // create a password hashed user object
             const inputUser = await userHelpers.createHashedUser(email, password, 2);
@@ -30,11 +30,11 @@ module.exports = {
             // create a new customer
             const outputCustomer = await customerHelpers.createCustomer(inputCustomer);
 
-            res.status(201).json({ success: true, data: outputCustomer });
+            return res.status(201).json({ success: true, data: outputCustomer });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Creating a customer failed!' });
+            return res.status(400).json({ success: false, message: 'Creating a customer failed!' });
         }
     },
 
@@ -46,11 +46,11 @@ module.exports = {
             // load the requested customer
             const customer = await helpers.getCustomer(id);
 
-            res.json({ success: true, data: customer });
+            return res.json({ success: true, data: customer });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Fetching the customer failed!' });
+            return res.status(400).json({ success: false, message: 'Fetching the customer failed!' });
         }
     },
 
@@ -62,11 +62,11 @@ module.exports = {
             // load the requested customers
             const customers = await helpers.getCustomers(email, roleId);
 
-            res.json({ success: true, data: customers });
+            return res.json({ success: true, data: customers });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Fetching the customers failed!' });
+            return res.status(400).json({ success: false, message: 'Fetching the customers failed!' });
         }
     },
 
@@ -100,15 +100,14 @@ module.exports = {
             const outputCustomer = await helpers.updateCustomer(inputCustomer);
 
             if (outputCustomer === null) { // no affected rows
-                res.status(400).json({ success: false, message: 'No customers updated.' });
+                return res.status(400).json({ success: false, message: 'No customers updated.' });
             }
-            else {
-                res.json({ status: 'OK', data: outputCustomer });
-            }
+
+            return res.json({ status: 'OK', data: outputCustomer });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Updating the customer failed!' });
+            return res.status(400).json({ success: false, message: 'Updating the customer failed!' });
         }
     },
 
@@ -121,15 +120,14 @@ module.exports = {
             const result = await helpers.deleteCustomer(id);
 
             if (result === 0) { // no affected rows
-                res.status(400).json({ success: false, message: 'No customers deleted.' });
+                return res.status(400).json({ success: false, message: 'No customers deleted.' });
             }
-            else {
-                res.json({ success: true, message: `Customer with the id ${id} deleted.` });
-            }
+
+            return res.json({ success: true, message: `Customer with the id ${id} deleted.` });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Deleting the customer failed!' });
+            return res.status(400).json({ success: false, message: 'Deleting the customer failed!' });
         }
     }
 };

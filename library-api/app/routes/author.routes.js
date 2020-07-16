@@ -28,6 +28,7 @@ router.route('/api/authors/:authorId')
         [
             authorMiddlewares.checkIntegrityError
         ],
-        ctrl.deleteAuthor);
+        ctrl.deleteAuthor
+    );
 
 module.exports = router;

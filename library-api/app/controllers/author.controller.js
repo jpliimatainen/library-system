@@ -20,11 +20,11 @@ module.exports = {
             // create a new author
             const outputAuthor = await helpers.createAuthor(inputAuthor);
 
-            res.status(201).json({ success: true, data: outputAuthor });
+            return res.status(201).json({ success: true, data: outputAuthor });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Creating an author failed!' });
+            return res.status(400).json({ success: false, message: 'Creating an author failed!' });
         }
     },
 
@@ -36,11 +36,11 @@ module.exports = {
             // load the requested author
             const author = await helpers.getAuthor(id);
 
-            res.json({ success: true, data: author });
+            return res.json({ success: true, data: author });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Fetching the author failed!' });
+            return res.status(400).json({ success: false, message: 'Fetching the author failed!' });
         }
     },
 
@@ -52,11 +52,11 @@ module.exports = {
             // load the requested authors
             const authors = await helpers.getAuthors(firstname, lastname);
 
-            res.json({ success: true, data: authors });
+            return res.json({ success: true, data: authors });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Fetching the authors failed!' });
+            return res.status(400).json({ success: false, message: 'Fetching the authors failed!' });
         }
     },
 
@@ -80,15 +80,14 @@ module.exports = {
             const outputAuthor = await helpers.updateAuthor(inputAuthor);
 
             if (outputAuthor === null) { // no affected rows
-                res.status(400).json({ success: false, message: 'No authors updated.' });
+                return res.status(400).json({ success: false, message: 'No authors updated.' });
             }
-            else {
-                res.json({ success: true, data: outputAuthor });
-            }
+
+            return res.json({ success: true, data: outputAuthor });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Updating the author failed!' });
+            return res.status(400).json({ success: false, message: 'Updating the author failed!' });
         }
     },
 
@@ -101,15 +100,14 @@ module.exports = {
             const result = await helpers.deleteAuthor(id);
 
             if (result === 0) { // no affected rows
-                res.status(400).json({ success: false, message: 'No authors deleted.' });
+                return res.status(400).json({ success: false, message: 'No authors deleted.' });
             }
-            else {
-                res.json({ success: true, message: `Author with the id ${id} deleted.` });
-            }
+
+            return res.json({ success: true, message: `Author with the id ${id} deleted.` });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Deleting the author failed!' });
+            return res.status(400).json({ success: false, message: 'Deleting the author failed!' });
         }
     }
 };

@@ -26,11 +26,11 @@ module.exports = {
             // create a new book
             const outputBook = await helpers.createBook(inputBook);
 
-            res.status(201).json({ success: true, data: outputBook });
+            return res.status(201).json({ success: true, data: outputBook });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Creating an book failed!' });
+            return res.status(400).json({ success: false, message: 'Creating an book failed!' });
         }
     },
 
@@ -42,11 +42,11 @@ module.exports = {
             // load the requested book
             const book = await helpers.getBook(id);
 
-            res.json({ success: true, data: book });
+            return res.json({ success: true, data: book });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Fetching the book failed!' });
+            return res.status(400).json({ success: false, message: 'Fetching the book failed!' });
         }
     },
 
@@ -58,11 +58,11 @@ module.exports = {
             // load the requested books
             const books = await helpers.getBooks(name, description, isbn, authorId, genreId);
 
-            res.json({ success: true, data: books });
+            return res.json({ success: true, data: books });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Fetching the books failed!' });
+            return res.status(400).json({ success: false, message: 'Fetching the books failed!' });
         }
     },
 
@@ -92,15 +92,14 @@ module.exports = {
             const outputBook = await helpers.updateBook(inputBook);
 
             if (outputBook === null) { // no affected rows
-                res.status(400).json({ success: false, message: 'No books updated.' });
+                return res.status(400).json({ success: false, message: 'No books updated.' });
             }
-            else {
-                res.json({ success: true, data: outputBook });
-            }
+
+            return res.json({ success: true, data: outputBook });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Updating the book failed!' });
+            return res.status(400).json({ success: false, message: 'Updating the book failed!' });
         }
     },
 
@@ -113,15 +112,14 @@ module.exports = {
             const result = await helpers.deleteBook(id);
 
             if (result === 0) { // no affected rows
-                res.status(400).json({ success: false, message: 'No books deleted.' });
+                return res.status(400).json({ success: false, message: 'No books deleted.' });
             }
-            else {
-                res.json({ success: true, message: `Book with the id ${id} deleted.` });
-            }
+
+            return res.json({ success: true, message: `Book with the id ${id} deleted.` });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Deleting the book failed!' });
+            return res.status(400).json({ success: false, message: 'Deleting the book failed!' });
         }
     }
 };

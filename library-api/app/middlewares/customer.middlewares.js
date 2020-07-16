@@ -9,8 +9,7 @@ module.exports = {
 
         if (parseInt(id) !== customerId) {
             // ids not match
-            res.status(400).json({ success: false, message: 'Customer ids not match.' });
-            return;
+            return res.status(400).json({ success: false, message: 'Customer ids not match.' });
         }
 
         next();
@@ -20,8 +19,7 @@ module.exports = {
         const { password, passwordConfirmed } = req.body;
 
         if (password !== passwordConfirmed) {
-            res.status(400).json({ success: false, message: 'Given passwords do not match!' });
-            return;
+            return res.status(400).json({ success: false, message: 'Given passwords do not match!' });
         }
 
         next();
@@ -38,14 +36,12 @@ module.exports = {
 
             if (customers.length > 0) {
                 if (id === null) { // inserting a new customer
-                    res.status(400).json({ success: false, message: 'A customer exists with the given email!' });
-                    return;
+                    return res.status(400).json({ success: false, message: 'A customer exists with the given email!' });
                 }
                 else { // updating a customer
                     if (customers[0].id !== parseInt(id)) {
                         // another customer having the same email
-                        res.status(400).json({ success: false, message: 'A customer exists with the given email!' });
-                        return;
+                        return res.status(400).json({ success: false, message: 'A customer exists with the given email!' });
                     }
                 }
             }
@@ -53,7 +49,7 @@ module.exports = {
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Fetching the customers failed!' });
+            return res.status(400).json({ success: false, message: 'Fetching the customers failed!' });
         }
     }
 };

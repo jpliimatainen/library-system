@@ -20,11 +20,11 @@ module.exports = {
             // create a new genre
             const outputGenre = await helpers.createGenre(inputGenre);
 
-            res.status(201).json({ success: true, data: outputGenre });
+            return res.status(201).json({ success: true, data: outputGenre });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Creating an genre failed!' });
+            return res.status(400).json({ success: false, message: 'Creating an genre failed!' });
         }
     },
 
@@ -36,11 +36,11 @@ module.exports = {
             // load the requested genre
             const genre = await helpers.getGenre(id);
 
-            res.json({ success: true, data: genre });
+            return res.json({ success: true, data: genre });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Fetching the genre failed!' });
+            return res.status(400).json({ success: false, message: 'Fetching the genre failed!' });
         }
     },
 
@@ -52,11 +52,11 @@ module.exports = {
             // load the requested genres
             const genres = await helpers.getGenres(classification, name);
 
-            res.json({ success: true, data: genres });
+            return res.json({ success: true, data: genres });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Fetching the genres failed!' });
+            return res.status(400).json({ success: false, message: 'Fetching the genres failed!' });
         }
     },
 
@@ -80,15 +80,14 @@ module.exports = {
             const outputGenre = await helpers.updateGenre(inputGenre);
 
             if (outputGenre === null) { // no affected rows
-                res.status(400).json({ success: false, message: 'No genres updated.' });
+                return res.status(400).json({ success: false, message: 'No genres updated.' });
             }
-            else {
-                res.json({ success: true, data: outputGenre });
-            }
+
+            return res.json({ success: true, data: outputGenre });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Updating the genre failed!' });
+            return res.status(400).json({ success: false, message: 'Updating the genre failed!' });
         }
     },
 
@@ -101,15 +100,14 @@ module.exports = {
             const result = await helpers.deleteGenre(id);
 
             if (result === 0) { // no affected rows
-                res.status(400).json({ success: false, message: 'No genres deleted.' });
+                return res.status(400).json({ success: false, message: 'No genres deleted.' });
             }
-            else {
-                res.json({ success: true, message: `Genre with the id ${id} deleted.` });
-            }
+
+            return res.json({ success: true, message: `Genre with the id ${id} deleted.` });
         }
         catch (err) {
             console.error(err);
-            res.status(400).json({ success: false, message: 'Deleting the genre failed!' });
+            return res.status(400).json({ success: false, message: 'Deleting the genre failed!' });
         }
     }
 };
