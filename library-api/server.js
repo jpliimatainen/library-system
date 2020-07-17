@@ -10,6 +10,8 @@ const customerRoutes = require('./app/routes/customer.routes');
 const genreRoutes = require('./app/routes/genre.routes');
 const userRoutes = require('./app/routes/user.routes');
 
+const helpers = require('./app/helpers/common.helpers');
+
 const app = express();
 
 const corsOptions = {
@@ -29,3 +31,6 @@ app.use(userRoutes);
 app.listen(port, () => {
     console.log(`Server is running on the port ${port}.`);
 });
+
+// save post codes
+// helpers.savePostCodes();

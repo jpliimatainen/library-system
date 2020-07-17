@@ -12,6 +12,7 @@ router.route('/api/users')
     )
     .post(
         [
+            authMiddlewares.validateToken,
             userMiddlewares.checkEmptyFields,
             userMiddlewares.checkInvalidEmail,
             userMiddlewares.checkInvalidPassword,
@@ -22,9 +23,13 @@ router.route('/api/users')
     );
 
 router.route('/api/users/:userId')
-    .get(ctrl.getUser)
+    .get(
+        [authMiddlewares.validateToken],
+        ctrl.getUser
+    )
     .put(
         [
+            authMiddlewares.validateToken,
             userMiddlewares.checkUserIdMismatch,
             userMiddlewares.checkEmptyFields,
             userMiddlewares.checkInvalidEmail,
@@ -36,6 +41,7 @@ router.route('/api/users/:userId')
     )
     .delete(
         [
+            authMiddlewares.validateToken,
             //userMiddlewares.checkIntegrityError
         ],
         ctrl.deleteUser

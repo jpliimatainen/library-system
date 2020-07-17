@@ -1,29 +1,56 @@
 const express = require('express');
 const router = express.Router();
 
-const ctrl = require('../controllers/customer.controller');
-const customerMiddlewares = require('../middlewares/customer.middlewares');
+const ctrl = require('../controllers/user.controller');
+const authMiddlewares = require('../middlewares/auth.middlewares');
+const userMiddlewares = require('../middlewares/user.middlewares');
 
-router.route('/api/customers')
-    .get(ctrl.getCustomers)
+router.route('/api/users')
+    .get(
+        [authMiddlewares.validateToken],
+        ctrl.getUsers
+    )
     .post(
         [
-            customerMiddlewares.checkPasswordMismatch, 
-            customerMiddlewares.checkDuplicateEmail
+            authMiddlewares.validateToken,
+            userMiddlewares.checkEmptyFields,
+            userMiddlewares.checkInvalidEmail,
+            userMiddlewares.checkInvalidPassword,
+            userMiddlewares.checkDuplicateUser,
+            userMiddlewares.checkRoleIntegrityError
         ],
-        ctrl.createCustomer
+        ctrl.createUser
     );
 
-router.route('/api/customers/:customerId')
-    .get(ctrl.getCustomer)
+router.route('/api/users/:userId')
+    .get(
+        [authMiddlewares.validateToken],
+        ctrl.getUser
+    )
     .put(
         [
-            customerMiddlewares.checkCustomerIdMismatch,
-            customerMiddlewares.checkPasswordMismatch, 
-            customerMiddlewares.checkDuplicateEmail
+            authMiddlewares.validateToken,
+            userMiddlewares.checkUserIdMismatch,
+            userMiddlewares.checkEmptyFields,
+            userMiddlewares.checkInvalidEmail,
+            userMiddlewares.checkInvalidPassword,
+            userMiddlewares.checkDuplicateUser,
+            userMiddlewares.checkRoleIntegrityError
         ],
-        ctrl.updateCustomer
+        ctrl.updateUser
     )
-    .delete(ctrl.deleteCustomer);
+    .delete(
+        [
+            authMiddlewares.validateToken,
+            //userMiddlewares.checkIntegrityError
+        ],
+        ctrl.deleteUser
+    );
+
+router.route('/api/users/login')
+    .post(
+        [userMiddlewares.checkEmptyCredentials],
+        ctrl.login
+    );
 
 module.exports = router;

@@ -1,6 +1,6 @@
 class Customer {
 
-    constructor(id, firstname, lastname, streetAddress, postCode, createdAt, updatedAt, userId, user) {
+    constructor(id, firstname, lastname, streetAddress, postCode, createdAt, updatedAt, userId, user, postCode, post) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -10,6 +10,8 @@ class Customer {
         this.updatedAt = updatedAt;
         this.userId = userId;
         this.user = user;
+        this.postCode = postCode;
+        this.post = post;
     }
 }
 
