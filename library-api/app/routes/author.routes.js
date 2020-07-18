@@ -9,7 +9,7 @@ router.route('/api/authors')
     .get(ctrl.getAuthors)
     .post(
         [
-            authMiddlewares.validateToken,
+            //authMiddlewares.validateToken,
             authorMiddlewares.checkEmptyFields,
             authorMiddlewares.checkDuplicateAuthor
         ],
@@ -20,7 +20,7 @@ router.route('/api/authors/:authorId')
     .get(ctrl.getAuthor)
     .put(
         [
-            authMiddlewares.validateToken,
+            //authMiddlewares.validateToken,
             authorMiddlewares.checkAuthorIdMismatch,
             authorMiddlewares.checkEmptyFields,
             authorMiddlewares.checkDuplicateAuthor
@@ -29,7 +29,7 @@ router.route('/api/authors/:authorId')
     )
     .delete(
         [
-            authMiddlewares.validateToken,
+            //authMiddlewares.validateToken,
             authorMiddlewares.checkIntegrityError
         ],
         ctrl.deleteAuthor

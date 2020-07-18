@@ -5,16 +5,18 @@ const genreHelpers = require('../helpers/genre.helpers');
 const Book = require('../models/Book');
 
 const insertBook = book => {
+    const { name, description, isbn, pages, authorId, genreId } = book;
+
     const query = "INSERT INTO  books(name, description, isbn, pages, author_id, genre_id)"
         + " VALUES(?, ?, ?, ?, ?, ?)";
 
     // execute an insert query
-    return dbQuery(query, [book.name, book.description, book.isbn, book.pages, book.authorId, book.genreId]);
+    return dbQuery(query, [name, description, isbn, pages, authorId, genreId]);
 };
 
 const getBookById = id => {
-    const query = "SELECT book_id, name, description, isbn, pages, created_at, updated_at, author_id, genre_id"
-        + " FROM books WHERE book_id = ?";
+    const query = "SELECT book_id AS 'bookId', name, description, isbn, pages, created_at AS 'createdAt', "
+        + "updated_at AS 'updatedAt', author_id AS 'authorId', genre_id AS 'genreId' FROM books WHERE book_id = ?";
 
     // execute a select query
     return dbQuery(query, [id]);
@@ -23,8 +25,8 @@ const getBookById = id => {
 const getBooksByParams = (name, description, isbn, authorId, genreId) => {
     const params = [];
 
-    let query = "SELECT book_id, name, description, isbn, pages, created_at, "
-        + "updated_at, author_id, genre_id FROM books WHERE 1 = 1";
+    let query = "SELECT book_id AS 'bookId', name, description, isbn, pages, created_at AS 'createdAt', "
+        + "updated_at AS 'updatedAt', author_id AS 'authorId', genre_id AS 'genreId' FROM books WHERE 1 = 1";
 
     if (name !== null && name !== undefined) {
         query += " AND UPPER(name) LIKE ?";
@@ -52,12 +54,13 @@ const getBooksByParams = (name, description, isbn, authorId, genreId) => {
 };
 
 const editBook = book => {
+    const { name, description, isbn, pages, authorId, genreId, id } = book;
+
     const query = "UPDATE books SET name = ?, description = ?, isbn = ?, pages = ?, "
         + "updated_at = CURRENT_TIMESTAMP(), author_id = ?, genre_id = ? WHERE book_id = ?";
 
     // execute an update query
-    return dbQuery(query, [book.name, book.description, book.isbn, book.pages,
-    book.authorId, book.genreId, book.id]);
+    return dbQuery(query, [name, description, isbn, pages, authorId, genreId, id]);
 };
 
 const removeBook = id => {
@@ -78,22 +81,22 @@ module.exports = {
         const created = result[0];
 
         // get the author of the book
-        const author = await authorHelpers.getAuthor(created.author_id);
+        const author = await authorHelpers.getAuthor(created.authorId);
 
         // get the genre of the book
-        const genre = await genreHelpers.getGenre(created.genre_id);
+        const genre = await genreHelpers.getGenre(created.genreId);
 
         return new Book(
-            created.book_id,
+            created.bookId,
             created.name,
             created.description,
             created.isbn,
             created.pages,
-            created.created_at,
-            created.updated_at,
-            author.author_id,
+            created.createdAt,
+            created.updatedAt,
+            author.authorId,
             author,
-            genre.genre_id,
+            genre.genreId,
             genre
         );
     },
@@ -104,22 +107,22 @@ module.exports = {
         const loaded = result[0];
 
         // get the author of the book
-        const author = await authorHelpers.getAuthor(loaded.author_id);
+        const author = await authorHelpers.getAuthor(loaded.authorId);
 
         // get the genre of the book
-        const genre = await genreHelpers.getGenre(loaded.genre_id);
+        const genre = await genreHelpers.getGenre(loaded.genreId);
 
         return new Book(
-            loaded.book_id,
+            loaded.bookId,
             loaded.name,
             loaded.description,
             loaded.isbn,
             loaded.pages,
-            loaded.created_at,
-            loaded.updated_at,
-            author.author_id,
+            loaded.createdAt,
+            loaded.updatedAt,
+            author.authorId,
             author,
-            genre.genre_id,
+            genre.genreId,
             genre
         );
     },
@@ -133,23 +136,23 @@ module.exports = {
         
         await commonHelpers.asyncForEach(result, async element => {
             // get the author of the book
-            author = await authorHelpers.getAuthor(element.author_id);
+            author = await authorHelpers.getAuthor(element.authorId);
 
             // get the genre of the book
-            genre = await genreHelpers.getGenre(element.genre_id);
+            genre = await genreHelpers.getGenre(element.genreId;
 
             books.push(
                 new Book(
-                    element.book_id,
+                    element.bookId,
                     element.name,
                     element.description,
                     element.isbn,
                     element.pages,
-                    element.created_at,
-                    element.updated_at,
-                    element.author_id,
+                    element.createdAt,
+                    element.updatedAt,
+                    element.authorId,
                     author,
-                    element.genre_id,
+                    element.genreId,
                     genre
                 )
             );
@@ -171,22 +174,22 @@ module.exports = {
             const updated = result[0];
 
             // get the author of the book
-            const author = await authorHelpers.getAuthor(updated.author_id);
+            const author = await authorHelpers.getAuthor(updated.authorId);
 
             // get the genre of the book
-            const genre = await genreHelpers.getGenre(updated.genre_id);
+            const genre = await genreHelpers.getGenre(updated.genreId);
 
             return new Book(
-                updated.book_id,
+                updated.bookId,
                 updated.name,
                 updated.description,
                 updated.isbn,
                 updated.pages,
-                updated.created_at,
-                updated.updated_at,
-                author.author_id,
+                updated.createdAt,
+                updated.updatedAt,
+                author.authorId,
                 author,
-                genre.genre_id,
+                genre.genreId,
                 genre
             );
         }

@@ -1,298 +1,250 @@
-const bcrypt = require('bcryptjs');
-
 const dbQuery = require('../models/db.model');
+
 const commonHelpers = require('../helpers/common.helpers');
+const userHelpers = require('../helpers/user.helpers');
 
-const Role = require('../models/Role');
-const User = require('../models/User');
+const Customer = require('../models/Customer');
+const Post = require('../models/Post');
 
-const insertUser = user => {
-    const query = "INSERT INTO  users(email, password, role_id) VALUES(?, ?, ?)";
+const insertCustomer = customer => {
+    const { firstname, lastname, streetAddress, userId, postCode } = customer;
+
+    const query = "INSERT INTO  customers(firstname, lastname, street_address, user_id, post_code)"
+        + " VALUES(?, ?, ?, ?, ?)";
 
     // execute an insert query
-    return dbQuery(query, [user.email, user.password, user.roleId]);
+    return dbQuery(query, [firstname, lastname, streetAddress, userId, postCode]);
 };
 
-const getUserById = id => {
-    const query = "SELECT user_id, email, password, created_at, updated_at, role_id"
-        + " FROM users WHERE user_id = ?";
+const getCustomerById = id => {
+    const query = "SELECT customer_id AS 'customerId', firstname, lastname, street_address AS 'streetAdress', created_at AS 'createdAt', "
+        + "updated_at AS 'updatedAt', user_id AS 'userId', post_code AS 'postCode' FROM customers WHERE customer_id = ?";
 
     // execute a select query
     return dbQuery(query, [id]);
 };
 
-const getUsersByParams = (email, roleId) => {
+const getCustomersByParams = (email, firstname, lastname, streetAddress, postCode) => {
     const params = [];
 
-    let query = "SELECT user_id, email, created_at, updated_at, role_id FROM users WHERE 1 = 1";
+    let query = "SELECT c.customer_id AS 'customerId', c.firstname AS 'firstname', c.lastname AS 'lastname', c.street_address AS "
+        + "'streetAddress', c.created_at AS 'createdAt', c.updated_at AS 'updatedAt', c.user_id AS 'userId', c.post_code AS 'postCode' "
+        + "FROM customers c JOIN users u ON c.user_id = u.user_id WHERE 1 = 1";
 
     if (email !== null && email !== undefined) {
-        query += " AND UPPER(email) LIKE ?";
+        query += " AND UPPER(u.email) LIKE ?";
         params.push('%' + email.toUpperCase() + '%');
     }
-    if (roleId !== null && roleId !== undefined) {
-        query += " AND role_id = ?";
-        params.push(roleId);
+    if (firstname !== null && firstname !== undefined) {
+        query += " AND UPPER(c.firstname) LIKE ?";
+        params.push('%' + firstname.toUpperCase() + '%');
+    }
+    if (lastname !== null && lastname !== undefined) {
+        query += " AND UPPER(c.lastname) LIKE ?";
+        params.push('%' + lastname.toUpperCase() + '%');
+    }
+    if (streetAddress !== null && streetAddress !== undefined) {
+        query += " AND UPPER(c.street_address) LIKE ?";
+        params.push('%' + streetAddress.toUpperCase() + '%');
+    }
+    if (postCode !== null && postCode !== undefined) {
+        query += " AND post_code = ?";
+        params.push(postCode);
     }
 
     // execute a select query
     return dbQuery(query, params);
 };
 
-const editUser = user => {
-    const query = "UPDATE users SET email = ?, password = ?, updated_at ="
-        + " CURRENT_TIMESTAMP(), role_id = ? WHERE user_id = ?";
+const editCustomer = customer => {
+    const { firstname, lastname, streetAddress, postCode, id } = customer;
+
+    const query = "UPDATE customers SET firstname = ?, lastname = ?, streetAddress = ?, postCode = ?, "
+        + "updated_at = CURRENT_TIMESTAMP() WHERE customer_id = ?";
 
     // execute an update query
-    return dbQuery(query, [user.email, user.password, user.roleId, user.id]);
+    return dbQuery(query, [firstname, lastname, streetAddress, postCode, id]);
 };
 
-const removeUser = id => {
-    const query = "DELETE FROM users WHERE user_id = ?";
+const removeCustomer = id => {
+    const query = "DELETE FROM customers WHERE customer_id = ?";
 
     // execute a delete query
     return dbQuery(query, [id]);
 };
 
-const getRoleById = id => {
-    const query = "SELECT role_id, name, created_at, updated_at FROM roles WHERE role_id = ?";
+const getPostByCode = postCode => {
+    const query = "SELECT post_code AS 'postCode', town FROM posts WHERE post_code = ?";
 
     // execute a select query
-    return dbQuery(query, [id]);
-};
-
-const getUserWithPassword = email => {
-    const query = "SELECT user_id, email, password, created_at, " 
-        + "updated_at, role_id FROM users WHERE email = ?";
-
-    // execute a select query
-    return dbQuery(query, [email]);
-}
-
-// create a hashed password
-const hashed = (password, saltRounds) => {
-    return new Promise((resolve, reject) => {
-        bcrypt.genSalt(saltRounds, function (err, salt) {
-            bcrypt.hash(password, salt, function (err, hash) {
-                if (err) {
-                    console.log(err);
-                    reject(err);
-                }
-                else {
-                    resolve(hash);
-                }
-            });
-        });
-    });
-};
-
-// compare an input password with a hashed one
-const compareWithHashed = (password, hash) => {
-    return new Promise((resolve, reject) => {
-        bcrypt.compare(password, hash, function (err, res) {
-            if (err) {
-                console.log(err);
-                reject(err);
-            }
-            else {
-                resolve(res);
-            }
-        });
-    });
+    return dbQuery(query, [postCode]);
 };
 
 module.exports = {
 
-    createHashedUser: async (email, password, roleId) => {
-        // create a hashed password
-        const hashedPw = await hashed(password, 10);
+    createCustomer: async customer => {
+        const { email, password, roleId } = customer.user;
 
-        return new User(
-            null,
-            email,
-            hashedPw,
-            null,
-            null,
-            roleId,
-            null,
-            null
-        );
-    },
+        // create a password hashed user object
+        const inputUser = await userHelpers.createHashedUser(email, password, roleId);
 
-    createUser: async user => {
         // create a new user
-        let result = await insertUser(user);
+        const outputUser = await userHelpers.createUser(inputUser);
 
-        // load the created user
-        result = await getUserById(result.insertId);
+        // attach the user id to the customer
+        customer.userId = outputUser.id;
+
+        // create a new customer
+        let result = await insertCustomer(customer);
+
+        // load the created customer
+        result = await getCustomerById(result.insertId);
         const created = result[0];
 
-        // get the role of the user
-        result = await getRoleById(created.role_id);
-        const role = result[0];
+        // get the post object of the customer
+        const post = await getPostByCode(created.postCode);
 
-        return new User(
-            created.user_id,
-            created.email,
-            null,
-            created.created_at,
-            created.updated_at,
-            created.role_id,
-            new Role(
-                role.role_id,
-                role.name,
-                role.created_at,
-                role.updated_at
-            ),
-            null
+        return new Customer(
+            created.customerId,
+            created.firstname,
+            created.lastname,
+            created.streetAddress,
+            created.createdAt,
+            created.updatedAt,
+            created.userId,
+            outputUser,
+            created.postCode,
+            new Post(
+                post.postCode,
+                post.town
+            )
         );
     },
 
-    getUser: async id => {
-        // load the requested user
-        let result = await getUserById(id);
+    getCustomer: async id => {
+        // load the requested customer
+        const result = await getCustomerById(id);
         const loaded = result[0];
 
-        // get the role of the user
-        result = await getRoleById(loaded.role_id);
-        const role = result[0];
+        // get the user object of the customer
+        const user = await userHelpers.getUser(loaded.userId);
 
-        return new User(
-            loaded.user_id,
-            loaded.email,
-            null,
-            loaded.created_at,
-            loaded.updated_at,
-            loaded.role_id,
-            new Role(
-                role.role_id,
-                role.name,
-                role.created_at,
-                role.updated_at
-            ),
-            null
+        // get the post object of the customer
+        const post = await getPostByCode(loaded.postCode);
+
+        return new Customer(
+            loaded.customerId,
+            loaded.firstname,
+            loaded.lastname,
+            loaded.streetAddress,
+            loaded.createdAt,
+            loaded.updatedAt,
+            loaded.userId,
+            user,
+            loaded.postCode,
+            new Post(
+                post.postCode,
+                post.town
+            )
         );
     },
 
-    getRole: async roleId => {
-        const result = await getRoleById(roleId);
+    getCustomers: async (email, firstname, lastname, streetAddress, postCode) => {
+        // load the requested customers
+        const result = await getCustomersByParams(email, firstname, lastname, streetAddress, postCode);
+
+        const customers = [];
+        let user, post = {};
+
+        await commonHelpers.asyncForEach(result, async element => {
+            // get the user object of the customer
+            user = await userHelpers.getUser(element.userId);
+
+            // get the post object of the customer
+            post = await getPostByCode(element.postCode);
+
+            customers.push(
+                new Customer(
+                    element.customerId,
+                    element.firstname,
+                    element.lastname,
+                    element.streetAddress,
+                    element.createdAt,
+                    element.updatedAt,
+                    element.userId,
+                    user,
+                    element.postCode,
+                    new Post(
+                        post.postCode,
+                        post.town
+                    )
+                )
+            );
+        });
+
+        return customers;
+    },
+
+    updateCustomer: async customer => {
+        const { email, password, roleId } = customer.user;
+
+        // create a password hashed user object
+        const inputUser = await userHelpers.createHashedUser(email, password, roleId);
+        inputUser.id = customer.userId;
+
+        // update the user
+        const outputUser = await helpers.updateUser(inputUser);
+
+        // update the customer
+        let result = await editCustomer(customer);
+
+        if (result.affectedRows === 0) { // no affected rows
+            return null;
+        }
+        else {
+            // load the updated customer
+            result = await getCustomerById(customer.id);
+            const updated = result[0];
+
+            // get the post object of the customer
+            const post = await getPostByCode(updated.postCode);
+
+            return new Customer(
+                updated.customerId,
+                updated.firstname,
+                updated.lastname,
+                updated.streetAddress,
+                updated.createdAt,
+                updated.updatedAt,
+                updated.userId,
+                outputUser,
+                updated.postCode,
+                new Post(
+                    post.postCode,
+                    post.town
+                )
+            );
+        }
+    },
+
+    deleteCustomer: async id => {
+        // delete the requested customer
+        const result = await removeCustomer(id);
+
+        return result.affectedRows;
+    },
+
+    getPost: async postCode => {
+        const result = await getPostByCode(postCode);
 
         if (result.length > 0) {
-            return new Role(
-                result[0].role_id,
-                result[0].name,
-                result[0].created_at,
-                result[0].updated_at
+            return new Post(
+                result[0].postCode,
+                result[0].town
             );
         }
 
         // not a role found
         return null;
     },
-
-    getUsers: async (email, roleId) => {
-        // load the requested users
-        const result = await getUsersByParams(email, roleId);
-        const users = [];
-        let role = {};
-
-        await commonHelpers.asyncForEach(result, async element => {
-            // get the role of the user
-            role = await getRoleById(element.role_id);
-
-            users.push(
-                new User(
-                    element.user_id,
-                    element.email,
-                    null,
-                    element.created_at,
-                    element.updated_at,
-                    element.role_id,
-                    new Role(
-                        role[0].role_id,
-                        role[0].name,
-                        role[0].created_at,
-                        role[0].updated_at
-                    ),
-                    null
-                )
-            );
-        });
-
-        return users;
-    },
-
-    updateUser: async user => {
-        // update the user
-        let result = await editUser(user);
-
-        if (result.affectedRows === 0) { // no affected rows
-            return null;
-        }
-        else {
-            // load the updated user
-            result = await getUserById(user.id);
-            const updated = result[0];
-
-            // get the role of the user
-            const role = await getRoleById(updated.role_id);
-
-            return new User(
-                updated.user_id,
-                updated.email,
-                null,
-                updated.created_at,
-                updated.updated_at,
-                updated.role_id,
-                new Role(
-                    role[0].role_id,
-                    role[0].name,
-                    role[0].created_at,
-                    role[0].updated_at
-                ),
-                null
-            );
-        }
-    },
-
-    deleteUser: async id => {
-        // delete the requested user
-        const result = await removeUser(id);
-
-        return result.affectedRows;
-    },
-
-    login: async (email, password) => {
-        let result = await getUserWithPassword(email);
-
-        if (result.length === 0) { // user not found
-            return null;
-        }
-
-        const loaded = result[0];
-        if (!compareWithHashed(password, loaded.password)) {
-            // passwords not match
-            return null;
-        }
-
-        // get the role of the user
-        result = await getRoleById(loaded.role_id);
-        const role = result[0];
-
-        return new User(
-            loaded.user_id,
-            loaded.email,
-            null,
-            loaded.created_at,
-            loaded.updated_at,
-            loaded.role_id,
-            new Role(
-                role.role_id,
-                role.name,
-                role.created_at,
-                role.updated_at
-            ),
-            null
-        );
-    }
 };

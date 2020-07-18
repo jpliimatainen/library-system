@@ -20,10 +20,8 @@ module.exports = {
 
     // save Finnish post codes to the database
     savePostCodes: async () => {
-        let result = '';
-
         for (const [key, value] of Object.entries(postCodes)) {
-            result = await insertPostCode(key, value);
+            await insertPostCode(key, value);
         }
     }
 };

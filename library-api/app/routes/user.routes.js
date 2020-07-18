@@ -7,12 +7,12 @@ const userMiddlewares = require('../middlewares/user.middlewares');
 
 router.route('/api/users')
     .get(
-        [authMiddlewares.validateToken],
+        //[authMiddlewares.validateToken],
         ctrl.getUsers
     )
     .post(
         [
-            authMiddlewares.validateToken,
+            //authMiddlewares.validateToken,
             userMiddlewares.checkEmptyFields,
             userMiddlewares.checkInvalidEmail,
             userMiddlewares.checkInvalidPassword,
@@ -29,7 +29,7 @@ router.route('/api/users/:userId')
     )
     .put(
         [
-            authMiddlewares.validateToken,
+            //authMiddlewares.validateToken,
             userMiddlewares.checkUserIdMismatch,
             userMiddlewares.checkEmptyFields,
             userMiddlewares.checkInvalidEmail,
@@ -41,7 +41,7 @@ router.route('/api/users/:userId')
     )
     .delete(
         [
-            authMiddlewares.validateToken,
+            //authMiddlewares.validateToken,
             //userMiddlewares.checkIntegrityError
         ],
         ctrl.deleteUser

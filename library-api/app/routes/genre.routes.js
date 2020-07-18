@@ -9,7 +9,7 @@ router.route('/api/genres')
     .get(ctrl.getGenres)
     .post(
         [
-            authMiddlewares.validateToken,
+            //authMiddlewares.validateToken,
             genreMiddlewares.checkEmptyFields,
             genreMiddlewares.checkDuplicateGenre
         ],
@@ -20,7 +20,7 @@ router.route('/api/genres/:genreId')
     .get(ctrl.getGenre)
     .put(
         [
-            authMiddlewares.validateToken,
+            //authMiddlewares.validateToken,
             genreMiddlewares.checkGenreIdMismatch,
             genreMiddlewares.checkEmptyFields,
             genreMiddlewares.checkDuplicateGenre
@@ -29,7 +29,7 @@ router.route('/api/genres/:genreId')
     )
     .delete(
         [
-            authMiddlewares.validateToken,
+            //authMiddlewares.validateToken,
             genreMiddlewares.checkIntegrityError
         ],
         ctrl.deleteGenre

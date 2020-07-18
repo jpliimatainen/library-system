@@ -1,7 +1,6 @@
-const helpers = require('../helpers/customer.helpers');
+const customerHelpers = require('../helpers/customer.helpers');
 
 module.exports = {
-
     checkCustomerIdMismatch: (req, res, next) => {
         // get the customer ids
         const id = req.params.customerId;
@@ -15,41 +14,57 @@ module.exports = {
         next();
     },
 
-    checkPasswordMismatch: (req, res, next) => {
-        const { password, passwordConfirmed } = req.body;
+    checkEmptyFields: (req, res, next) => {
+        // get input fields
+        const { email, password, passwordConfirmed, firstname, lastname, streetAddress, postCode } = req.body;
 
-        if (password !== passwordConfirmed) {
-            return res.status(400).json({ success: false, message: 'Given passwords do not match!' });
+        const emptyFields = [];
+
+        if (email === null || email === undefined || email === '') {
+            emptyFields.push('email');
+        }
+        if (password === null || password === undefined || password === '') {
+            emptyFields.push('password');
+        }
+        if (passwordConfirmed === null || passwordConfirmed === undefined || passwordConfirmed === '') {
+            emptyFields.push('passwordConfirmed');
+        }
+        if (firstname === null || firstname === undefined || firstname === '') {
+            emptyFields.push('firstname');
+        }
+        if (lastname === null || lastname === undefined || lastname === '') {
+            emptyFields.push('lastname');
+        }
+        if (streetAddress === null || streetAddress === undefined || streetAddress === '') {
+            emptyFields.push('streetAddress');
+        }
+        if (postCode === null || postCode === undefined || postCode === '') {
+            emptyFields.push('postCode');
+        }
+
+        if (emptyFields.length > 0) {
+            // empty field(s) exist(s)
+            return res.status(400).json({ success: false, fields: emptyFields, message: 'Fields cannot be empty' });
         }
 
         next();
     },
 
-    checkDuplicateEmail: async (req, res, next) => {
-        const { email } = req.body;
-        // get the customer id (if set)
-        const id = req.params.customerId || null;
+    checkPostCodeIntegrityError: async (req, res, next) => {
+        const { postCode } = req.body;
 
         try {
-            // load the customer with the email
-            const customers = await helpers.getCustomerByEmail(email);
+            // load the post object
+            const post = await customerHelpers.getPost(postCode);
 
-            if (customers.length > 0) {
-                if (id === null) { // inserting a new customer
-                    return res.status(400).json({ success: false, message: 'A customer exists with the given email!' });
-                }
-                else { // updating a customer
-                    if (customers[0].id !== parseInt(id)) {
-                        // another customer having the same email
-                        return res.status(400).json({ success: false, message: 'A customer exists with the given email!' });
-                    }
-                }
+            if (post === null) { 
+                return res.status(400).json({ success: false, message: 'An invalid post code given!' });
             }
             next();
         }
         catch (err) {
             console.error(err);
-            return res.status(400).json({ success: false, message: 'Fetching the customers failed!' });
+            return res.status(400).json({ success: false, message: 'Fetching the post code failed!' });
         }
-    }
+    }, 
 };

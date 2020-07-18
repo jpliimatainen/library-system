@@ -1,135 +1,142 @@
-const jwt = require('jsonwebtoken');
+const helpers = require('../helpers/customer.helpers');
 
-const { secret } = require('../config/env.config');
-const helpers = require('../helpers/user.helpers');
-
+const Customer = require('../models/Customer');
 const User = require('../models/User');
 
 module.exports = {
 
-    createUser: async (req, res) => {
+    createCustomer: async (req, res) => {
         // get POST data
-        const { email, password, roleId } = req.body;
+        const { firstname, lastname, streetAddress, postCode, email, password } = req.body;
+
+        const inputCustomer = new Customer(
+            null,
+            firstname,
+            lastname,
+            streetAddress,
+            null,
+            null,
+            null,
+            new User(
+               null,
+               email,
+               password,
+               null,
+               null,
+               2, // customer role
+               null,
+               null 
+            ),
+            postCode,
+            null
+        );
 
         try {
-            // create a password hashed user object
-            const inputUser = await helpers.createHashedUser(email, password, roleId);
+            // create a new customer
+            const outputCustomer = await helpers.createCustomer(inputCustomer);
 
-            // create a new user
-            const outputUser = await helpers.createUser(inputUser);
-
-            return res.status(201).json({ success: true, data: outputUser });
+            return res.status(201).json({ success: true, data: outputCustomer });
         }
         catch (err) {
             console.error(err);
-            return res.status(400).json({ success: false, message: 'Creating an user failed!' });
+            return res.status(400).json({ success: false, message: 'Creating an customer failed!' });
         }
     },
 
-    getUser: async (req, res) => {
-        // get the user id
-        const id = req.params.userId;
+    getCustomer: async (req, res) => {
+        // get the customer id
+        const id = req.params.customerId;
 
         try {
-            // load the requested user
-            const user = await helpers.getUser(id);
+            // load the requested customer
+            const customer = await helpers.getCustomer(id);
 
-            return res.json({ success: true, data: user });
+            return res.json({ success: true, data: customer });
         }
         catch (err) {
             console.error(err);
-            return res.status(400).json({ success: false, message: 'Fetching the user failed!' });
+            return res.status(400).json({ success: false, message: 'Fetching the customer failed!' });
         }
     },
 
-    getUsers: async (req, res) => {
+    getCustomers: async (req, res) => {
         // get query parameteres
-        const { email, roleId } = req.query;
-        
-        try {
-            // load the requested users
-            const users = await helpers.getUsers(email, roleId);
+        const { email, firstname, lastname, streetAddress, postCode } = req.query;
 
-            return res.json({ success: true, data: users });
+        try {
+            // load the requested customers
+            const customers = await helpers.getCustomers(email, firstname, lastname, streetAddress, postCode);
+
+            return res.json({ success: true, data: customers });
         }
         catch (err) {
             console.error(err);
-            return res.status(400).json({ success: false, message: 'Fetching the users failed!' });
+            return res.status(400).json({ success: false, message: 'Fetching the customers failed!' });
         }
     },
 
-    updateUser: async (req, res) => {
-        // get the user id
-        const id = req.params.userId;
+    updateCustomer: async (req, res) => {
+        // get the customer id
+        const id = req.params.customerId;
 
         // get PUT data
-        const { email, password, roleId } = req.body;
+        const { firstname, lastname, streetAddress, postCode, email, password } = req.body;
+
+        const inputCustomer = new Customer(
+            null,
+            firstname,
+            lastname,
+            streetAddress,
+            null,
+            null,
+            null,
+            new User(
+               null,
+               email,
+               password,
+               null,
+               null,
+               2, // customer role
+               null,
+               null 
+            ),
+            postCode,
+            null
+        );
 
         try {
-            // create a password hashed user object
-            const inputUser = await helpers.createHashedUser(email, password, roleId);
-            inputUser.id = id;
+            // update the customer
+            const outputCustomer = await helpers.updateCustomer(inputCustomer);
 
-            // update the user
-            const outputUser = await helpers.updateUser(inputUser);
-
-            if (outputUser === null) { // no affected rows
-                return res.status(400).json({ success: false, message: 'No users updated.' });
+            if (outputCustomer === null) { // no affected rows
+                return res.status(400).json({ success: false, message: 'No customers updated.' });
             }
 
-            return res.json({ status: 'OK', data: outputUser });
+            return res.json({ success: true, data: outputCustomer });
         }
         catch (err) {
             console.error(err);
-            return res.status(400).json({ success: false, message: 'Updating the user failed!' });
+            return res.status(400).json({ success: false, message: 'Updating the customer failed!' });
         }
     },
 
-    deleteUser: async (req, res) => {
-        // get the user id
-        const id = req.params.userId;
+    deleteCustomer: async (req, res) => {
+        // get the customer id
+        const id = req.params.customerId;
 
         try {
-            // delete the requested user
-            const result = await helpers.deleteUser(id);
+            // delete the requested customer
+            const result = await helpers.deleteCustomer(id);
 
             if (result === 0) { // no affected rows
-                return res.status(400).json({ success: false, message: 'No users deleted.' });
+                return res.status(400).json({ success: false, message: 'No customers deleted.' });
             }
 
-            return res.json({ success: true, message: `User with the id ${id} deleted.` });
+            return res.json({ success: true, message: `Customer with the id ${id} deleted.` });
         }
         catch (err) {
             console.error(err);
-            return res.status(400).json({ success: false, message: 'Deleting the user failed!' });
-        }
-    },
-
-    login: async (req, res) => {
-        const { email, password } = req.body;
-
-        try {
-            const user = await helpers.login(email, password);
-
-            if (user === null) {
-                return res.status(403).json({ success: false, message: 'Incorrect email or password!' });
-            }
-
-            // create a JWT
-            const token = jwt.sign(
-                { userId: user.id, email: user.email, role: user.role },
-                secret,
-                { expiresIn: '1h' }
-            );
-
-            // attach the token to the user object
-            user.token = token;
-
-            return res.json({ success: true, user: user, message: 'Login succeeded!' });
-        }
-        catch (err) {
-            console.error(err);
-            return res.status(400).json({ success: false, message: 'Login failed!' });
+            return res.status(400).json({ success: false, message: 'Deleting the customer failed!' });
         }
     }
 };

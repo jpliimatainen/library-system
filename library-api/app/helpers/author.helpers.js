@@ -2,15 +2,17 @@ const dbQuery = require('../models/db.model');
 const Author = require('../models/Author');
 
 const insertAuthor = author => {
+    const { firstname, lastname } = author;
+
     const query = "INSERT INTO  authors(firstname, lastname) VALUES(?, ?)";
 
     // execute an insert query
-    return dbQuery(query, [author.firstname, author.lastname]);
+    return dbQuery(query, [firstname, lastname]);
 };
 
 const getAuthorById = id => {
-    const query = "SELECT author_id, firstname, lastname, created_at, updated_at FROM "
-        + "authors WHERE author_id = ?";
+    const query = "SELECT author_id AS 'authorId', firstname, lastname, created_at "
+        + "AS 'createdAt', updated_at AS 'updatedAt' FROM authors WHERE author_id = ?";
 
     // execute a select query
     return dbQuery(query, [id]);
@@ -19,8 +21,8 @@ const getAuthorById = id => {
 const getAuthorsByParams = (firstname, lastname) => {
     const params = [];
 
-    let query = "SELECT author_id, firstname, lastname, created_at, updated_at "
-        + "FROM authors WHERE 1 = 1";
+    let query = "SELECT author_id AS 'authorId', firstname, lastname, created_at "
+        + "AS 'createdAt', updated_at AS 'updatedAt' FROM authors WHERE 1 = 1";
 
     if (firstname !== null && firstname !== undefined) {
         query += " AND UPPER(firstname) LIKE ?";
@@ -36,11 +38,13 @@ const getAuthorsByParams = (firstname, lastname) => {
 };
 
 const editAuthor = author => {
+    const { firstname, lastname, id } = author;
+
     const query = "UPDATE authors SET firstname = ?, lastname = ?, "
         + "updated_at = CURRENT_TIMESTAMP() WHERE author_id = ?";
 
     // execute an update query
-    return dbQuery(query, [author.firstname, author.lastname, author.id]);
+    return dbQuery(query, [firstname, lastname, id]);
 };
 
 const removeAuthor = id => {
@@ -61,11 +65,11 @@ module.exports = {
         const created = result[0];
 
         return new Author(
-            created.author_id,
+            created.authorId,
             created.firstname,
             created.lastname,
-            created.created_at,
-            created.updated_at
+            created.createdAt,
+            created.updatedAt
         );
     },
 
@@ -75,11 +79,11 @@ module.exports = {
         const loaded = result[0];
 
         return new Author(
-            loaded.author_id,
+            loaded.authorId,
             loaded.firstname,
             loaded.lastname,
-            loaded.created_at,
-            loaded.updated_at
+            loaded.createdAt,
+            loaded.updatedAt
         );
     },
 
@@ -91,11 +95,11 @@ module.exports = {
         result.forEach(element => {
             authors.push(
                 new Author(
-                    element.author_id,
+                    element.authorId,
                     element.firstname,
                     element.lastname,
-                    element.created_at,
-                    element.updated_at
+                    element.createdAt,
+                    element.updatedAt
                 )
             );
         });
@@ -116,11 +120,11 @@ module.exports = {
             const updated = result[0];
 
             return new Author(
-                updated.author_id,
+                updated.authorId,
                 updated.firstname,
                 updated.lastname,
-                updated.created_at,
-                updated.updated_at
+                updated.createdAt,
+                updated.updatedAt
             );
         }
     },

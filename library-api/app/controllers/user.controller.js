@@ -3,8 +3,6 @@ const jwt = require('jsonwebtoken');
 const { secret } = require('../config/env.config');
 const helpers = require('../helpers/user.helpers');
 
-const User = require('../models/User');
-
 module.exports = {
 
     createUser: async (req, res) => {
@@ -109,6 +107,7 @@ module.exports = {
         const { email, password } = req.body;
 
         try {
+            // check if valid credentials entered
             const user = await helpers.login(email, password);
 
             if (user === null) {

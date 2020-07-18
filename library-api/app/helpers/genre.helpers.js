@@ -2,15 +2,17 @@ const dbQuery = require('../models/db.model');
 const Genre = require('../models/Genre');
 
 const insertGenre = genre => {
+    const { classification, name } = genre;
+
     const query = "INSERT INTO  genres(classification, name) VALUES(?, ?)";
 
     // execute an insert query
-    return dbQuery(query, [genre.classification, genre.name]);
+    return dbQuery(query, [classification, name]);
 };
 
 const getGenreById = id => {
-    const query = "SELECT genre_id, classification, name, created_at, updated_at FROM "
-        + "genres WHERE genre_id = ?";
+    const query = "SELECT genre_id AS 'genreId', classification, name, created_at "
+        + "AS 'createdAt', updated_at AS 'updatedAt' FROM genres WHERE genre_id = ?";
 
     // execute a select query
     return dbQuery(query, [id]);
@@ -19,8 +21,8 @@ const getGenreById = id => {
 const getGenresByParams = (classification, name) => {
     const params = [];
 
-    let query = "SELECT genre_id, classification, name, created_at, updated_at "
-        + "FROM genres WHERE 1 = 1";
+    let query = "SELECT genre_id AS 'genreId', classification, name, created_at "
+        + "AS 'createdAt', updated_at AS 'updatedAt' FROM genres WHERE 1 = 1";
 
     if (classification !== null && classification !== undefined) {
         query += " AND UPPER(classification) = ?";
@@ -36,11 +38,13 @@ const getGenresByParams = (classification, name) => {
 };
 
 const editGenre = genre => {
+    const { classification, name, id } = genre;
+
     const query = "UPDATE genres SET classification = ?, name = ?, "
         + "updated_at = CURRENT_TIMESTAMP() WHERE genre_id = ?";
 
     // execute an update query
-    return dbQuery(query, [genre.classification, genre.name, genre.id]);
+    return dbQuery(query, [classification, name, id]);
 };
 
 const removeGenre = id => {
@@ -61,11 +65,11 @@ module.exports = {
         const created = result[0];
 
         return new Genre(
-            created.genre_id,
+            created.genreId,
             created.classification,
             created.name,
-            created.created_at,
-            created.updated_at
+            created.createdAt,
+            created.updatedAt
         );
     },
 
@@ -75,11 +79,11 @@ module.exports = {
         const loaded = result[0];
 
         return new Genre(
-            loaded.genre_id,
+            loaded.genreId,
             loaded.classification,
             loaded.name,
-            loaded.created_at,
-            loaded.updated_at
+            loaded.createdAt,
+            loaded.updatedAt
         );
     },
 
@@ -91,11 +95,11 @@ module.exports = {
         result.forEach(element => {
             genres.push(
                 new Genre(
-                    element.genre_id,
+                    element.genreId,
                     element.classification,
                     element.name,
-                    element.created_at,
-                    element.updated_at
+                    element.createdAt,
+                    element.updatedAt
                 )
             );
         });
@@ -116,11 +120,11 @@ module.exports = {
             const updated = result[0];
 
             return new Genre(
-                updated.genre_id,
+                updated.genreId,
                 updated.classification,
                 updated.name,
-                updated.created_at,
-                updated.updated_at
+                updated.createdAt,
+                updated.updatedAt
             );
         }
     },

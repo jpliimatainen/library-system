@@ -32,5 +32,5 @@ app.listen(port, () => {
     console.log(`Server is running on the port ${port}.`);
 });
 
-// save post codes
+// uncomment this to save post codes to the database
 // helpers.savePostCodes();

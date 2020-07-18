@@ -7,15 +7,17 @@ const Role = require('../models/Role');
 const User = require('../models/User');
 
 const insertUser = user => {
+    const { email, password, roleId } = user;
+
     const query = "INSERT INTO  users(email, password, role_id) VALUES(?, ?, ?)";
 
     // execute an insert query
-    return dbQuery(query, [user.email, user.password, user.roleId]);
+    return dbQuery(query, [email, password, roleId]);
 };
 
 const getUserById = id => {
-    const query = "SELECT user_id, email, password, created_at, updated_at, role_id"
-        + " FROM users WHERE user_id = ?";
+    const query = "SELECT user_id AS 'userId', email, password, created_at AS 'createdAt', "
+        + "updated_at AS 'updatedAt', role_id AS 'roleId' FROM users WHERE user_id = ?";
 
     // execute a select query
     return dbQuery(query, [id]);
@@ -24,7 +26,8 @@ const getUserById = id => {
 const getUsersByParams = (email, roleId) => {
     const params = [];
 
-    let query = "SELECT user_id, email, created_at, updated_at, role_id FROM users WHERE 1 = 1";
+    let query = "SELECT user_id AS 'userId', email, password, created_at AS 'createdAt', "
+        + "updated_at AS 'updatedAt', role_id AS 'roleId' FROM users WHERE 1 = 1";
 
     if (email !== null && email !== undefined) {
         query += " AND UPPER(email) LIKE ?";
@@ -40,11 +43,13 @@ const getUsersByParams = (email, roleId) => {
 };
 
 const editUser = user => {
+    const { email, password, roleId, id } = user;
+
     const query = "UPDATE users SET email = ?, password = ?, updated_at ="
         + " CURRENT_TIMESTAMP(), role_id = ? WHERE user_id = ?";
 
     // execute an update query
-    return dbQuery(query, [user.email, user.password, user.roleId, user.id]);
+    return dbQuery(query, [email, password, roleId, id]);
 };
 
 const removeUser = id => {
@@ -55,15 +60,16 @@ const removeUser = id => {
 };
 
 const getRoleById = id => {
-    const query = "SELECT role_id, name, created_at, updated_at FROM roles WHERE role_id = ?";
+    const query = "SELECT role_id AS 'roleId', name, created_at AS 'createdAt', "
+        + "updated_at AS 'updatedAt' FROM roles WHERE role_id = ?";
 
     // execute a select query
     return dbQuery(query, [id]);
 };
 
 const getUserWithPassword = email => {
-    const query = "SELECT user_id, email, password, created_at, " 
-        + "updated_at, role_id FROM users WHERE email = ?";
+    const query = "SELECT user_id AS 'userId', email, password, created_at AS 'createdAt', " 
+        + "updated_at AS 'updatedAt', role_id AS 'roleId' FROM users WHERE email = ?";
 
     // execute a select query
     return dbQuery(query, [email]);
@@ -128,21 +134,21 @@ module.exports = {
         const created = result[0];
 
         // get the role of the user
-        result = await getRoleById(created.role_id);
+        result = await getRoleById(created.roleId);
         const role = result[0];
 
         return new User(
-            created.user_id,
+            created.userId,
             created.email,
             null,
-            created.created_at,
-            created.updated_at,
-            created.role_id,
+            created.createdAt,
+            created.updatedAt,
+            created.roleId,
             new Role(
-                role.role_id,
+                role.roleId,
                 role.name,
-                role.created_at,
-                role.updated_at
+                role.createdAt,
+                role.updatedAt
             ),
             null
         );
@@ -154,21 +160,21 @@ module.exports = {
         const loaded = result[0];
 
         // get the role of the user
-        result = await getRoleById(loaded.role_id);
+        result = await getRoleById(loaded.roleId);
         const role = result[0];
 
         return new User(
-            loaded.user_id,
+            loaded.userId,
             loaded.email,
             null,
-            loaded.created_at,
-            loaded.updated_at,
-            loaded.role_id,
+            loaded.createdAt,
+            loaded.updatedAt,
+            loaded.roleId,
             new Role(
-                role.role_id,
+                role.roleId,
                 role.name,
-                role.created_at,
-                role.updated_at
+                role.createdAt,
+                role.updatedAt
             ),
             null
         );
@@ -179,10 +185,10 @@ module.exports = {
 
         if (result.length > 0) {
             return new Role(
-                result[0].role_id,
+                result[0].roleId,
                 result[0].name,
-                result[0].created_at,
-                result[0].updated_at
+                result[0].createdAt,
+                result[0].updatedAt
             );
         }
 
@@ -198,21 +204,21 @@ module.exports = {
 
         await commonHelpers.asyncForEach(result, async element => {
             // get the role of the user
-            role = await getRoleById(element.role_id);
+            role = await getRoleById(element.roleId);
 
             users.push(
                 new User(
-                    element.user_id,
+                    element.userId,
                     element.email,
                     null,
-                    element.created_at,
-                    element.updated_at,
-                    element.role_id,
+                    element.createdAt,
+                    element.updatedAt,
+                    element.roleId,
                     new Role(
-                        role[0].role_id,
+                        role[0].roleId,
                         role[0].name,
-                        role[0].created_at,
-                        role[0].updated_at
+                        role[0].createdAt,
+                        role[0].updatedAt
                     ),
                     null
                 )
@@ -235,20 +241,20 @@ module.exports = {
             const updated = result[0];
 
             // get the role of the user
-            const role = await getRoleById(updated.role_id);
+            const role = await getRoleById(updated.roleId);
 
             return new User(
-                updated.user_id,
+                updated.userId,
                 updated.email,
                 null,
-                updated.created_at,
-                updated.updated_at,
-                updated.role_id,
+                updated.createdAt,
+                updated.updatedAt,
+                updated.roleId,
                 new Role(
-                    role[0].role_id,
+                    role[0].roleId,
                     role[0].name,
-                    role[0].created_at,
-                    role[0].updated_at
+                    role[0].createdAt,
+                    role[0].updatedAt
                 ),
                 null
             );
@@ -276,21 +282,21 @@ module.exports = {
         }
 
         // get the role of the user
-        result = await getRoleById(loaded.role_id);
+        result = await getRoleById(loaded.roleId);
         const role = result[0];
 
         return new User(
-            loaded.user_id,
+            loaded.userId,
             loaded.email,
             null,
-            loaded.created_at,
-            loaded.updated_at,
-            loaded.role_id,
+            loaded.createdAt,
+            loaded.updatedAt,
+            loaded.roleId,
             new Role(
-                role.role_id,
+                role.roleId,
                 role.name,
-                role.created_at,
-                role.updated_at
+                role.createdAt,
+                role.updatedAt
             ),
             null
         );
