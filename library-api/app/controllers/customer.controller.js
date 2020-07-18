@@ -83,7 +83,7 @@ module.exports = {
         const { firstname, lastname, streetAddress, postCode, email, password } = req.body;
 
         const inputCustomer = new Customer(
-            null,
+            id,
             firstname,
             lastname,
             streetAddress,

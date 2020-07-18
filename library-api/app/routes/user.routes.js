@@ -24,7 +24,7 @@ router.route('/api/users')
 
 router.route('/api/users/:userId')
     .get(
-        [authMiddlewares.validateToken],
+        //[authMiddlewares.validateToken],
         ctrl.getUser
     )
     .put(

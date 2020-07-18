@@ -50,6 +50,27 @@ module.exports = {
         next();
     },
 
+    checkDuplicateCustomer: async (req, res, next) => {
+        const { email } = req.body;
+
+        // get the customer id
+        const id = req.params.customerId;
+
+        try {
+            // load the requested customer
+            const customers = await customerHelpers.getCustomers(email);
+
+            if (customers.length > 0 && customers[0].id !== parseInt(id)) {
+                return res.status(400).json({ success: false, message: 'A customer exists with the given email!' });
+            }
+            next();
+        }
+        catch (err) {
+            console.error(err);
+            return res.status(400).json({ success: false, message: 'Fetching the customers failed!' });
+        }
+    },
+
     checkPostCodeIntegrityError: async (req, res, next) => {
         const { postCode } = req.body;
 
@@ -57,7 +78,7 @@ module.exports = {
             // load the post object
             const post = await customerHelpers.getPost(postCode);
 
-            if (post === null) { 
+            if (post === null) {
                 return res.status(400).json({ success: false, message: 'An invalid post code given!' });
             }
             next();
@@ -66,5 +87,5 @@ module.exports = {
             console.error(err);
             return res.status(400).json({ success: false, message: 'Fetching the post code failed!' });
         }
-    }, 
+    },
 };

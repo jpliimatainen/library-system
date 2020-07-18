@@ -276,7 +276,7 @@ module.exports = {
         }
 
         const loaded = result[0];
-        if (!compareWithHashed(password, loaded.password)) {
+        if (!(await compareWithHashed(password, loaded.password))) {
             // passwords not match
             return null;
         }

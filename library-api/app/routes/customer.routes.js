@@ -18,7 +18,6 @@ router.route('/api/customers')
             userMiddlewares.checkInvalidEmail,
             userMiddlewares.checkInvalidPassword,
             userMiddlewares.checkDuplicateUser,
-            userMiddlewares.checkRoleIntegrityError,
             customerMiddlewares.checkPostCodeIntegrityError
         ],
         ctrl.createCustomer
@@ -36,8 +35,7 @@ router.route('/api/customers/:customerId')
             customerMiddlewares.checkEmptyFields,
             userMiddlewares.checkInvalidEmail,
             userMiddlewares.checkInvalidPassword,
-            userMiddlewares.checkDuplicateUser,
-            userMiddlewares.checkRoleIntegrityError,
+            customerMiddlewares.checkDuplicateCustomer,
             customerMiddlewares.checkPostCodeIntegrityError
         ],
         ctrl.updateCustomer

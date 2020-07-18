@@ -58,8 +58,8 @@ const getCustomersByParams = (email, firstname, lastname, streetAddress, postCod
 
 const editCustomer = customer => {
     const { firstname, lastname, streetAddress, postCode, id } = customer;
-
-    const query = "UPDATE customers SET firstname = ?, lastname = ?, streetAddress = ?, postCode = ?, "
+    
+    const query = "UPDATE customers SET firstname = ?, lastname = ?, street_address = ?, post_code = ?, "
         + "updated_at = CURRENT_TIMESTAMP() WHERE customer_id = ?";
 
     // execute an update query
@@ -102,7 +102,8 @@ module.exports = {
         const created = result[0];
 
         // get the post object of the customer
-        const post = await getPostByCode(created.postCode);
+        result = await getPostByCode(created.postCode);
+        const post = result[0];
 
         return new Customer(
             created.customerId,
@@ -123,14 +124,15 @@ module.exports = {
 
     getCustomer: async id => {
         // load the requested customer
-        const result = await getCustomerById(id);
+        let result = await getCustomerById(id);
         const loaded = result[0];
 
         // get the user object of the customer
         const user = await userHelpers.getUser(loaded.userId);
 
         // get the post object of the customer
-        const post = await getPostByCode(loaded.postCode);
+        result = await getPostByCode(loaded.postCode);
+        const post = result[0];
 
         return new Customer(
             loaded.customerId,
@@ -151,7 +153,7 @@ module.exports = {
 
     getCustomers: async (email, firstname, lastname, streetAddress, postCode) => {
         // load the requested customers
-        const result = await getCustomersByParams(email, firstname, lastname, streetAddress, postCode);
+        let result = await getCustomersByParams(email, firstname, lastname, streetAddress, postCode);
 
         const customers = [];
         let user, post = {};
@@ -161,7 +163,8 @@ module.exports = {
             user = await userHelpers.getUser(element.userId);
 
             // get the post object of the customer
-            post = await getPostByCode(element.postCode);
+            result = await getPostByCode(element.postCode);
+            post = result[0];
 
             customers.push(
                 new Customer(
@@ -187,17 +190,17 @@ module.exports = {
 
     updateCustomer: async customer => {
         const { email, password, roleId } = customer.user;
-
+        
         // create a password hashed user object
         const inputUser = await userHelpers.createHashedUser(email, password, roleId);
         inputUser.id = customer.userId;
 
         // update the user
-        const outputUser = await helpers.updateUser(inputUser);
+        const outputUser = await userHelpers.updateUser(inputUser);
 
         // update the customer
         let result = await editCustomer(customer);
-
+        
         if (result.affectedRows === 0) { // no affected rows
             return null;
         }
@@ -207,7 +210,8 @@ module.exports = {
             const updated = result[0];
 
             // get the post object of the customer
-            const post = await getPostByCode(updated.postCode);
+            result = await getPostByCode(updated.postCode);
+            const post = result[0];
 
             return new Customer(
                 updated.customerId,
