@@ -139,7 +139,7 @@ module.exports = {
             author = await authorHelpers.getAuthor(element.authorId);
 
             // get the genre of the book
-            genre = await genreHelpers.getGenre(element.genreId;
+            genre = await genreHelpers.getGenre(element.genreId);
 
             books.push(
                 new Book(
