@@ -43,7 +43,7 @@ module.exports = {
         const { email } = req.body;
 
         // a valid email pattern
-        const pattern = /^(\w|\.)+@(\w)+\.(\w){2,3}$/;
+        const pattern = /^(\w|\.|_|-)+@(\w)+\.(\w){2,3}$/;
         
         if (pattern.exec(email) === null) {
             return res.status(400).json({ success: false, message: 'An invalid email given!' });

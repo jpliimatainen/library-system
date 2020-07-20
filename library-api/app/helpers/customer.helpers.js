@@ -80,6 +80,13 @@ const getPostByCode = postCode => {
     return dbQuery(query, [postCode]);
 };
 
+const getUserIdByCustomerId = customerId => {
+    const query = "SELECT user_id AS 'userId' FROM customers WHERE customer_id = ?";
+
+    // execute a select query
+    return dbQuery(query, [customerId]);
+};
+
 module.exports = {
 
     createCustomer: async customer => {
@@ -193,13 +200,16 @@ module.exports = {
         
         // create a password hashed user object
         const inputUser = await userHelpers.createHashedUser(email, password, roleId);
-        inputUser.id = customer.userId;
+
+        // get the user id of the customer
+        let result = await getUserIdByCustomerId(customer.id);
+        inputUser.id = result[0].userId;
 
         // update the user
         const outputUser = await userHelpers.updateUser(inputUser);
 
         // update the customer
-        let result = await editCustomer(customer);
+        result = await editCustomer(customer);
         
         if (result.affectedRows === 0) { // no affected rows
             return null;
@@ -232,10 +242,21 @@ module.exports = {
     },
 
     deleteCustomer: async id => {
-        // delete the requested customer
-        const result = await removeCustomer(id);
+        let count = 0;
 
-        return result.affectedRows;
+        // get the user id of the customer
+        let result = await getUserIdByCustomerId(id);
+        const userId = result[0].userId;
+
+        // delete the requested customer
+        result = await removeCustomer(id);
+        count = parseInt(result.affectedRows);
+        
+        // delete the user
+        result = await userHelpers.deleteUser(userId);
+        count += parseInt(result.affectedRows);
+
+        return count;
     },
 
     getPost: async postCode => {
