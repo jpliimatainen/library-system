@@ -6,6 +6,7 @@ const { port } = require('./app/config/env.config');
 
 const authorRoutes = require('./app/routes/author.routes');
 const bookRoutes = require('./app/routes/book.routes');
+const bookingRoutes = require('./app/routes/booking.routes');
 const customerRoutes = require('./app/routes/customer.routes');
 const genreRoutes = require('./app/routes/genre.routes');
 const userRoutes = require('./app/routes/user.routes');
@@ -15,7 +16,7 @@ const helpers = require('./app/helpers/common.helpers');
 const app = express();
 
 const corsOptions = {
-    origin: 'http://localhost:5000',
+    origin: 'http://localhost:5001',
     methods: 'GET, PUT, POST, DELETE'
 };
 
@@ -24,6 +25,7 @@ app.use(bodyParser.json());
 
 app.use(authorRoutes);
 app.use(bookRoutes);
+app.use(bookingRoutes);
 app.use(customerRoutes);
 app.use(genreRoutes);
 app.use(userRoutes);

@@ -209,6 +209,22 @@ COLLATE = utf8_swedish_ci;
 
 
 -- -----------------------------------------------------
+-- Table `librarydb`.`book_states`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `librarydb`.`book_states` ;
+
+CREATE TABLE IF NOT EXISTS `librarydb`.`book_states` (
+  `book_state_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`book_state_id`),
+  UNIQUE INDEX `book_state_id_UNIQUE` (`book_state_id` ASC),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_swedish_ci;
+
+
+-- -----------------------------------------------------
 -- Table `librarydb`.`books_bookings`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `librarydb`.`books_bookings` ;
@@ -218,8 +234,10 @@ CREATE TABLE IF NOT EXISTS `librarydb`.`books_bookings` (
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `book_id` INT(10) UNSIGNED NOT NULL,
   `booking_id` INT(10) UNSIGNED NOT NULL,
+  `book_state_id` INT UNSIGNED NOT NULL,
   INDEX `fk_books_bookings_bookings1_idx` (`booking_id` ASC),
   INDEX `fk_books_bookings_books1_idx` (`book_id` ASC),
+  INDEX `fk_books_bookings_book_states1_idx` (`book_state_id` ASC),
   CONSTRAINT `fk_books_bookings_bookings1`
     FOREIGN KEY (`booking_id`)
     REFERENCES `librarydb`.`bookings` (`booking_id`)
@@ -228,6 +246,11 @@ CREATE TABLE IF NOT EXISTS `librarydb`.`books_bookings` (
   CONSTRAINT `fk_books_bookings_books1`
     FOREIGN KEY (`book_id`)
     REFERENCES `librarydb`.`books` (`book_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_books_bookings_book_states1`
+    FOREIGN KEY (`book_state_id`)
+    REFERENCES `librarydb`.`book_states` (`book_state_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
