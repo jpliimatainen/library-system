@@ -10,8 +10,8 @@ module.exports = {
 
         const inputBooking = new Booking(
             null,
-            bookingDate,
-            dueDate,
+            new Date(bookingDate),
+            new Date(dueDate),
             null,
             null,
             customerId,
@@ -24,6 +24,8 @@ module.exports = {
                 null,
                 null,
                 element,
+                null,
+                1, // book state "on loan"
                 null
             ));
         });
@@ -41,12 +43,12 @@ module.exports = {
     },
 
     getBooking: async (req, res) => {
-        // get the booking id
-        const id = req.params.bookingId;
+        // get the id
+        const { bookingId } = req.params;
 
         try {
             // load the requested booking
-            const booking = await helpers.getBooking(id);
+            const booking = await helpers.getBooking(bookingId);
 
             return res.json({ success: true, data: booking });
         }
@@ -57,12 +59,32 @@ module.exports = {
     },
 
     getBookings: async (req, res) => {
-        // get query parameteres
-        const { name, description, isbn, authorId, genreId } = req.query;
+        // get query parameters
+        const { bookingDateStart, bookingDateEnd, dueDateStart, dueDateEnd, customerId, bookId, bookStateId } = req.query;
 
         try {
             // load the requested bookings
-            const bookings = await helpers.getBookings(name, description, isbn, authorId, genreId);
+            const bookings = await helpers.getBookings(
+                bookingDateStart, bookingDateEnd, dueDateStart, dueDateEnd, customerId, bookId, bookStateId);
+
+            return res.json({ success: true, data: bookings });
+        }
+        catch (err) {
+            console.error(err);
+            return res.status(400).json({ success: false, message: 'Fetching the bookings failed!' });
+        }
+    },
+
+    getCustomerBookings: async (req, res) => {
+        // get query parameters
+        const { bookingDateStart, bookingDateEnd, dueDateStart, dueDateEnd, bookId, bookStateId } = req.query;
+        // get customer id from url path or query (if set)
+        const { customerId } = req.params || req.query;
+
+        try {
+            // load the requested bookings
+            const bookings = await helpers.getBookings(
+                bookingDateStart, bookingDateEnd, dueDateStart, dueDateEnd, customerId, bookId, bookStateId);
 
             return res.json({ success: true, data: bookings });
         }

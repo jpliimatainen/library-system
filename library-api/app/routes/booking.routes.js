@@ -2,33 +2,32 @@ const express = require('express');
 const router = express.Router();
 
 const ctrl = require('../controllers/booking.controller');
-const authMiddlewares = require('../middlewares/auth.middlewares');
 const bookingMiddlewares = require('../middlewares/booking.middlewares');
 
 router.route('/api/bookings')
     .get(ctrl.getBookings);
 
 router.route('/api/customers/:customerId/bookings')
-    .get(ctrl.getBookings)
+    .get(ctrl.getCustomerBookings)
     .post(
         [
             //authMiddlewares.validateToken,
-            //bookingMiddlewares.checkEmptyFields,
-            //bookingMiddlewares.checkIntegrityErrors,
-            //bookingMiddlewares.checkDuplicateBooking
+            bookingMiddlewares.checkCustomerIdMismatch,
+            bookingMiddlewares.checkInvalidDates,
+            bookingMiddlewares.checkIntegrityErrors,
         ],
         ctrl.createBooking
     );
 
 router.route('/api/customers/:customerId/bookings/:bookingId')
-    .get(ctrl.getBooking)
+    .get(
+        [bookingMiddlewares.checkCustomerIdMismatchGet],
+        ctrl.getBooking)
     .put(
         [
             //authMiddlewares.validateToken,
-            bookingMiddlewares.checkBookingIdMismatch,
-            bookingMiddlewares.checkEmptyFields,
+            bookingMiddlewares.checkCustomerIdMismatch,
             bookingMiddlewares.checkIntegrityErrors,
-            bookingMiddlewares.checkDuplicateBooking
         ],
         ctrl.updateBooking
     )

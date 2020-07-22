@@ -6,6 +6,7 @@ const genreHelpers = require('../helpers/genre.helpers');
 
 const Booking = require('../models/Booking');
 const BookBooking = require('../models/BookBooking');
+const BookState = require('../models/BookState');
 
 const insertBooking = booking => {
     const { bookingDate, dueDate, customerId } = booking;
@@ -16,11 +17,11 @@ const insertBooking = booking => {
     return dbQuery(query, [bookingDate, dueDate, customerId]);
 };
 
-const insertBookBooking = (bookId, bookingId) => {
-    const query = "INSERT INTO  books_bookings(book_id, booking_id) VALUES(?, ?)";
+const insertBookBooking = (bookId, bookingId, bookStateId) => {
+    const query = "INSERT INTO  books_bookings(book_id, booking_id, book_state_id) VALUES(?, ?, ?)";
 
     // execute an insert query
-    return dbQuery(query, [bookId, bookingId]);
+    return dbQuery(query, [bookId, bookingId, bookStateId]);
 };
 
 const getBookingById = id => {
@@ -31,31 +32,40 @@ const getBookingById = id => {
     return dbQuery(query, [id]);
 };
 
-const getBookingsByParams = (name, description, isbn, authorId, genreId) => {
+const getBookingsByParams = (bookingDateStart, bookingDateEnd, dueDateStart, dueDateEnd, customerId, bookId, bookStateId) => {
     const params = [];
 
-    let query = "SELECT booking_id AS 'bookingId', name, description, isbn, pages, created_at AS 'createdAt', "
-        + "updated_at AS 'updatedAt', author_id AS 'authorId', genre_id AS 'genreId' FROM bookings WHERE 1 = 1";
+    let query = "SELECT DISTINCT b.booking_id AS 'bookingId', b.booking_date AS 'bookingDate', b.due_date AS 'dueDate', "
+        + "b.created_at AS 'createdAt', b.updated_at AS 'updatedAt', b.customer_id AS 'customerId' FROM bookings b "
+        + "JOIN books_bookings bb ON b.booking_id = bb.booking_id WHERE 1 = 1";
 
-    if (name !== null && name !== undefined) {
-        query += " AND UPPER(name) LIKE ?";
-        params.push('%' + name.toUpperCase() + '%');
+    if (bookingDateStart !== null && bookingDateStart !== undefined) {
+        query += " AND b.booking_date >= ?";
+        params.push(bookingDateStart);
     }
-    if (description !== null && description !== undefined) {
-        query += " AND UPPER(description) LIKE ?";
-        params.push('%' + description.toUpperCase() + '%');
+    if (bookingDateEnd !== null && bookingDateEnd !== undefined) {
+        query += " AND b.booking_date <= ?";
+        params.push(bookingDateEnd);
     }
-    if (isbn !== null && isbn !== undefined) {
-        query += " AND UPPER(isbn) = ?";
-        params.push(isbn.toUpperCase());
+    if (dueDateStart !== null && dueDateStart !== undefined) {
+        query += " AND b.due_date >= ?";
+        params.push(dueDateStart);
     }
-    if (authorId !== null && authorId !== undefined) {
-        query += " AND author_id = ?";
-        params.push(authorId);
+    if (dueDateEnd !== null && dueDateEnd !== undefined) {
+        query += " AND b.due_date <= ?";
+        params.push(dueDateEnd);
     }
-    if (genreId !== null && genreId !== undefined) {
-        query += " AND genre_id = ?";
-        params.push(genreId);
+    if (customerId !== null && customerId !== undefined) {
+        query += " AND b.customer_id = ?";
+        params.push(customerId);
+    }
+    if (bookId !== null && bookId !== undefined) {
+        query += " AND bb.book_id = ?";
+        params.push(bookId);
+    }
+    if (bookStateId !== null && bookStateId !== undefined) {
+        query += " AND bb.book_state_id = ?";
+        params.push(bookStateId);
     }
 
     // execute a select query
@@ -63,8 +73,9 @@ const getBookingsByParams = (name, description, isbn, authorId, genreId) => {
 };
 
 const getBookBookingsByBookingId = bookingId => {
-    const query = "SELECT created_at AS 'createdAt', updated_at AS 'updatedAt', book_id AS 'bookId', "
-        + "booking_id AS 'bookingId' FROM books_bookings WHERE booking_id = ?";
+    const query = "SELECT bb.created_at AS 'createdAt', bb.updated_at AS 'updatedAt', bb.book_id AS 'bookId', "
+        + "bb.booking_id AS 'bookingId', bb.book_state_id AS 'bookStateId', bs.name AS 'bookStateName' "
+        + "FROM books_bookings bb JOIN book_states bs ON bb.book_state_id = bs.book_state_id WHERE bb.booking_id = ?";
 
     // execute a select query
     return dbQuery(query, [bookingId]);
@@ -102,7 +113,7 @@ module.exports = {
 
         // create books_bookings records
         await commonHelpers.asyncForEach(booking.bookBookings, async element => {
-            await insertBookBooking(element.bookId, created.bookingId);
+            await insertBookBooking(element.bookId, created.bookingId, element.bookStateId);
         });
 
         // load the created records
@@ -115,7 +126,12 @@ module.exports = {
                 element.createdAt,
                 element.updatedAt,
                 element.bookId,
-                element.bookingId
+                element.bookingId,
+                element.bookStateId,
+                new BookState(
+                    element.bookStateId,
+                    element.bookStateName
+                )
             ));
         });
 
@@ -133,61 +149,89 @@ module.exports = {
 
     getBooking: async id => {
         // load the requested booking
-        const result = await getBookingById(id);
+        let result = await getBookingById(id);
         const loaded = result[0];
 
-        // get the author of the booking
-        const author = await authorHelpers.getAuthor(loaded.authorId);
+        // load the customer object
+        const customer = await customerHelpers.getCustomer(loaded.customerId);
 
-        // get the genre of the booking
-        const genre = await genreHelpers.getGenre(loaded.genreId);
+        // load the books_bookings records
+        result = await getBookBookingsByBookingId(loaded.bookingId);
+
+        const bookBookings = [];
+
+        result.forEach(element => {
+            bookBookings.push(new BookBooking(
+                element.createdAt,
+                element.updatedAt,
+                element.bookId,
+                element.bookingId,
+                element.bookStateId,
+                new BookState(
+                    element.bookStateId,
+                    element.bookStateName
+                )
+            ));
+        });
 
         return new Booking(
             loaded.bookingId,
-            loaded.name,
-            loaded.description,
-            loaded.isbn,
-            loaded.pages,
+            loaded.bookingDate,
+            loaded.dueDate,
             loaded.createdAt,
             loaded.updatedAt,
-            author.authorId,
-            author,
-            genre.genreId,
-            genre
+            loaded.customerId,
+            customer,
+            bookBookings
         );
     },
 
-    getBookings: async (name, description, isbn, authorId, genreId) => {
+    getBookings: async (bookingDateStart, bookingDateEnd, dueDateStart, dueDateEnd, customerId, bookId, bookStateId) => {
         // load the requested bookings
-        const result = await getBookingsByParams(name, description, isbn, authorId, genreId);
-        
-        const bookings = [];
-        let author, genre = {};
-        
-        await commonHelpers.asyncForEach(result, async element => {
-            // get the author of the booking
-            author = await authorHelpers.getAuthor(element.authorId);
+        let result = await getBookingsByParams(
+            bookingDateStart, bookingDateEnd, dueDateStart, dueDateEnd, customerId, bookId, bookStateId);
 
-            // get the genre of the booking
-            genre = await genreHelpers.getGenre(element.genreId);
+        const bookings = [];
+        let customer = {};
+        let bookBookings = [];
+        
+        await commonHelpers.asyncForEach(result, async booking => {
+            bookBookings = [];
+
+            // load the customer object
+            customer = await customerHelpers.getCustomer(booking.customerId);
+
+            // load the books_bookings records
+            result = await getBookBookingsByBookingId(booking.bookingId);
+
+            result.forEach(bookBooking => {
+                bookBookings.push(new BookBooking(
+                    bookBooking.createdAt,
+                    bookBooking.updatedAt,
+                    bookBooking.bookId,
+                    bookBooking.bookingId,
+                    bookBooking.bookStateId,
+                    new BookState(
+                        bookBooking.bookStateId,
+                        bookBooking.bookStateName
+                    )
+                ));
+            });
 
             bookings.push(
                 new Booking(
-                    element.bookingId,
-                    element.name,
-                    element.description,
-                    element.isbn,
-                    element.pages,
-                    element.createdAt,
-                    element.updatedAt,
-                    element.authorId,
-                    author,
-                    element.genreId,
-                    genre
+                    booking.bookingId,
+                    booking.bookingDate,
+                    booking.dueDate,
+                    booking.createdAt,
+                    booking.updatedAt,
+                    booking.customerId,
+                    customer,
+                    bookBookings
                 )
             );
         });
-        
+
         return bookings;
     },
 

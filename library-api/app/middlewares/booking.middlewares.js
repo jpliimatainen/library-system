@@ -1,8 +1,34 @@
-const authorHelpers = require('../helpers/author.helpers');
+const bookHelpers = require('../helpers/book.helpers');
 const bookingHelpers = require('../helpers/booking.helpers');
-const genreHelpers = require('../helpers/genre.helpers');
+const commonHelpers = require('../helpers/common.helpers');
+const customerHelpers = require('../helpers/customer.helpers');
 
 module.exports = {
+
+    checkCustomerIdMismatch: (req, res, next) => {
+        // get customer ids
+        const id = req.params.customerId;
+        const { customerId } = req.body;
+
+        if (parseInt(id) !== customerId) {
+            // ids not match
+            return res.status(400).json({ success: false, message: 'Customer ids not match.' });
+        }
+
+        next();
+    },
+
+    checkCustomerIdMismatchGet: async (req, res, next) => {
+        const { customerId, bookingId } = req.params;
+        const booking = await bookingHelpers.getBooking(bookingId);
+        
+        if (parseInt(customerId) !== booking.customerId) {
+            return res.status(400).json({ success: false, message: 'Customer ids not match.' });
+        }
+
+        next();
+    },
+
     checkBookingIdMismatch: (req, res, next) => {
         // get the booking ids
         const id = req.params.bookingId;
@@ -16,78 +42,53 @@ module.exports = {
         next();
     },
 
-    checkEmptyFields: (req, res, next) => {
-        // get input fields
-        const { name, isbn } = req.body;
-
-        const emptyFields = [];
-
-        if (name === null || name === undefined || name === '') {
-            emptyFields.push('name');
-        }
-        if (isbn === null || isbn === undefined || isbn === '') {
-            emptyFields.push('isbn');
-        }
-
-        if (emptyFields.length > 0) {
-            // empty field(s) exist(s)
-            return res.status(400).json({ success: false, fields: emptyFields, message: 'Fields cannot be empty' });
-        }
-
-        next();
-    },
-
-    checkDuplicateBooking: async (req, res, next) => {
-        const { isbn } = req.body;
-
-        // get the booking id (if set)
-        const id = req.params.bookingId || null;
+    checkInvalidDates: (req, res, next) => {
+        const { bookingDate, dueDate } = req.body;
 
         try {
-            // load the requested booking
-            const bookings = await bookingHelpers.getBookings(null, null, isbn, null, null);
+            // try to parse date objects
+            const bDate = Date.parse(bookingDate);
+            const dDate = Date.parse(dueDate);
             
-            if (bookings.length > 0) {
-                if (id === null) { // inserting a new booking
-                    return res.status(400).json({ success: false, message: 'A booking exists with the given isbn!' });
-                }
-                else { // updating an booking
-                    if (bookings[0].id !== parseInt(id)) {
-                        // another booking having the same isbn
-                        return res.status(400).json({ success: false, message: 'A booking exists with the given isbn!' });
-                    }
-                }
+            if (isNaN(bDate) || isNaN(dDate)) {
+                return res.status(400).json({ success: false, message: 'An invalid date given!' });
+            }
+            
+            if (dDate <= bDate) {
+                return res.status(400).json({ success: false, message: 'Due date must be later than booking date!' });
             }
 
             next();
         }
         catch (err) {
             console.error(err);
-            return res.status(400).json({ success: false, message: 'Fetching the bookings failed!' });
+            return res.status(400).json({ success: false, message: 'An invalid date given!' });
         }
     },
 
     checkIntegrityErrors: async (req, res, next) => {
-        const { authorId, genreId } = req.body;
+        const { customerId, bookIds } = req.body;
 
         try {
-            // load the author of the booking
-            const author = await authorHelpers.getAuthor(authorId);
+            // load the customer of the booking
+            const customer = await customerHelpers.getCustomer(customerId);
         }
         catch (err) {
             console.error(err);
-            return res.status(400).json({ success: false, message: 'An invalid author id given!' });
+            return res.status(400).json({ success: false, message: 'An invalid customer id given!' });
         }
 
         try {
-            // load the genre of the booking
-            const author = await genreHelpers.getGenre(genreId);
+            // load the books of the booking
+            await commonHelpers.asyncForEach(bookIds, async element => {
+                await bookHelpers.getBook(element);
+            });
 
             next();
         }
         catch (err) {
             console.error(err);
-            return res.status(400).json({ success: false, message: 'An invalid genre id given!' });
+            return res.status(400).json({ success: false, message: 'An invalid book id given!' });
         }
     }
 };

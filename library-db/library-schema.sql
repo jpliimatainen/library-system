@@ -114,6 +114,7 @@ CREATE TABLE IF NOT EXISTS `librarydb`.`customers` (
   UNIQUE INDEX `customer_id_UNIQUE` (`customer_id` ASC),
   INDEX `fk_customers_users1_idx` (`user_id` ASC),
   INDEX `fk_customers_posts1_idx` (`post_code` ASC),
+  UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC),
   CONSTRAINT `fk_customers_users1`
     FOREIGN KEY (`user_id`)
     REFERENCES `librarydb`.`users` (`user_id`)
