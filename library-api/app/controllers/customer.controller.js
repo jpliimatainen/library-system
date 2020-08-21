@@ -49,7 +49,7 @@ module.exports = {
 
         try {
             // load the requested customer
-            const customer = await helpers.getCustomer(id);
+            const customer = await helpers.getCustomerById(id);
 
             return res.json({ success: true, data: customer });
         }

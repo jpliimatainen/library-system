@@ -16,8 +16,6 @@ router.route('/api/customers')
     )
     .post(
         [
-            authMiddlewares.validateToken,
-            authMiddlewares.isAdmin,
             customerMiddlewares.checkEmptyFields,
             userMiddlewares.checkInvalidEmail,
             userMiddlewares.checkInvalidPassword,
@@ -30,13 +28,15 @@ router.route('/api/customers')
 router.route('/api/customers/:customerId')
     .get(
         [
-            authMiddlewares.validateToken
+            authMiddlewares.validateToken,
+            customerMiddlewares.isAuthorized
         ],
         ctrl.getCustomer
     )
     .put(
         [
             authMiddlewares.validateToken,
+            customerMiddlewares.isAuthorized,
             customerMiddlewares.checkCustomerIdMismatch,
             customerMiddlewares.checkEmptyFields,
             userMiddlewares.checkInvalidEmail,
@@ -49,10 +49,10 @@ router.route('/api/customers/:customerId')
     .delete(
         [
             authMiddlewares.validateToken,
-            authMiddlewares.isAdmin,
-            customerMiddlewares.checkIntegrityError
+            authMiddlewares.isAdmin
+            //customerMiddlewares.checkIntegrityError
         ],
         ctrl.deleteCustomer
     );
-
+    
 module.exports = router;

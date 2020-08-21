@@ -30,7 +30,7 @@ module.exports = {
 
         try {
             // load the requested user
-            const user = await helpers.getUser(id);
+            const user = await helpers.getUserById(id);
 
             return res.json({ success: true, data: user });
         }

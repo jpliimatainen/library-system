@@ -34,7 +34,7 @@ module.exports = {
 
         try {
             // load the requested genre
-            const genre = await helpers.getGenre(id);
+            const genre = await helpers.getGenreById(id);
 
             return res.json({ success: true, data: genre });
         }

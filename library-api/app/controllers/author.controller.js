@@ -34,7 +34,7 @@ module.exports = {
 
         try {
             // load the requested author
-            const author = await helpers.getAuthor(id);
+            const author = await helpers.getAuthorById(id);
 
             return res.json({ success: true, data: author });
         }

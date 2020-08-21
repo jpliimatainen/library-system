@@ -14,20 +14,16 @@ const insertBook = book => {
     return dbQuery(query, [name, description, isbn, pages, authorId, genreId]);
 };
 
-const getBookById = id => {
-    const query = "SELECT book_id AS 'bookId', name, description, isbn, pages, created_at AS 'createdAt', "
-        + "updated_at AS 'updatedAt', author_id AS 'authorId', genre_id AS 'genreId' FROM books WHERE book_id = ?";
-
-    // execute a select query
-    return dbQuery(query, [id]);
-};
-
-const getBooksByParams = (name, description, isbn, authorId, genreId) => {
+const getBooksByParams = (id, name, description, isbn, authorId, genreId) => {
     const params = [];
 
     let query = "SELECT book_id AS 'bookId', name, description, isbn, pages, created_at AS 'createdAt', "
         + "updated_at AS 'updatedAt', author_id AS 'authorId', genre_id AS 'genreId' FROM books WHERE 1 = 1";
 
+    if (id !== null && id !== undefined) {
+        query += " AND book_id = ?";
+        params.push(id);
+    }
     if (name !== null && name !== undefined) {
         query += " AND UPPER(name) LIKE ?";
         params.push('%' + name.toUpperCase() + '%');
@@ -40,6 +36,24 @@ const getBooksByParams = (name, description, isbn, authorId, genreId) => {
         query += " AND UPPER(isbn) = ?";
         params.push(isbn.toUpperCase());
     }
+    if (authorId !== null && authorId !== undefined) {
+        query += " AND author_id = ?";
+        params.push(authorId);
+    }
+    if (genreId !== null && genreId !== undefined) {
+        query += " AND genre_id = ?";
+        params.push(genreId);
+    }
+
+    // execute a select query
+    return dbQuery(query, params);
+};
+
+const getNumOfBooks = (authorId, genreId) => {
+    const params = [];
+
+    let query = "SELECT COUNT(1) AS 'count' FROM books WHERE 1 = 1";
+
     if (authorId !== null && authorId !== undefined) {
         query += " AND author_id = ?";
         params.push(authorId);
@@ -77,14 +91,14 @@ module.exports = {
         let result = await insertBook(book);
 
         // load the created book
-        result = await getBookById(result.insertId);
+        result = await getBooksByParams(result.insertId, null, null, null, null, null);
         const created = result[0];
 
         // get the author of the book
-        const author = await authorHelpers.getAuthor(created.authorId);
+        const author = await authorHelpers.getAuthorById(created.authorId);
 
         // get the genre of the book
-        const genre = await genreHelpers.getGenre(created.genreId);
+        const genre = await genreHelpers.getGenreById(created.genreId);
 
         return new Book(
             created.bookId,
@@ -101,16 +115,16 @@ module.exports = {
         );
     },
 
-    getBook: async id => {
+    getBookById: async id => {
         // load the requested book
-        const result = await getBookById(id);
+        const result = await getBooksByParams(id, null, null, null, null, null);
         const loaded = result[0];
 
         // get the author of the book
-        const author = await authorHelpers.getAuthor(loaded.authorId);
+        const author = await authorHelpers.getAuthorById(loaded.authorId);
 
         // get the genre of the book
-        const genre = await genreHelpers.getGenre(loaded.genreId);
+        const genre = await genreHelpers.getGenreById(loaded.genreId);
 
         return new Book(
             loaded.bookId,
@@ -129,17 +143,17 @@ module.exports = {
 
     getBooks: async (name, description, isbn, authorId, genreId) => {
         // load the requested books
-        const result = await getBooksByParams(name, description, isbn, authorId, genreId);
-        
+        const result = await getBooksByParams(null, name, description, isbn, authorId, genreId);
+
         const books = [];
         let author, genre = {};
-        
+
         await commonHelpers.asyncForEach(result, async element => {
             // get the author of the book
-            author = await authorHelpers.getAuthor(element.authorId);
+            author = await authorHelpers.getAuthorById(element.authorId);
 
             // get the genre of the book
-            genre = await genreHelpers.getGenre(element.genreId);
+            genre = await genreHelpers.getGenreById(element.genreId);
 
             books.push(
                 new Book(
@@ -157,8 +171,20 @@ module.exports = {
                 )
             );
         });
-        
+
         return books;
+    },
+
+    getNumOfBooksByAuthor: async authorId => {
+        const result = await getNumOfBooks(authorId, null);
+
+        return result[0].count;
+    },
+
+    getNumOfBooksByGenre: async genreId => {
+        const result = await getNumOfBooks(null, genreId);
+        
+        return result[0].count;
     },
 
     updateBook: async book => {
@@ -170,14 +196,14 @@ module.exports = {
         }
         else {
             // load the updated book
-            result = await getBookById(book.id);
+            result = await getBooksByParams(book.id, null, null, null, null, null);
             const updated = result[0];
 
             // get the author of the book
-            const author = await authorHelpers.getAuthor(updated.authorId);
+            const author = await authorHelpers.getAuthorById(updated.authorId);
 
             // get the genre of the book
-            const genre = await genreHelpers.getGenre(updated.genreId);
+            const genre = await genreHelpers.getGenreById(updated.genreId);
 
             return new Book(
                 updated.bookId,

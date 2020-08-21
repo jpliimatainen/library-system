@@ -40,7 +40,7 @@ module.exports = {
 
         try {
             // load the requested book
-            const book = await helpers.getBook(id);
+            const book = await helpers.getBookById(id);
 
             return res.json({ success: true, data: book });
         }

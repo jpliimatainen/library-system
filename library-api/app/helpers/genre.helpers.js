@@ -10,20 +10,16 @@ const insertGenre = genre => {
     return dbQuery(query, [classification, name]);
 };
 
-const getGenreById = id => {
-    const query = "SELECT genre_id AS 'genreId', classification, name, created_at "
-        + "AS 'createdAt', updated_at AS 'updatedAt' FROM genres WHERE genre_id = ?";
-
-    // execute a select query
-    return dbQuery(query, [id]);
-};
-
-const getGenresByParams = (classification, name) => {
+const getGenresByParams = (id, classification, name) => {
     const params = [];
 
     let query = "SELECT genre_id AS 'genreId', classification, name, created_at "
         + "AS 'createdAt', updated_at AS 'updatedAt' FROM genres WHERE 1 = 1";
 
+    if (id !== null && id !== undefined) {
+        query += " AND genre_id = ?";
+        params.push(id);
+    }
     if (classification !== null && classification !== undefined) {
         query += " AND UPPER(classification) = ?";
         params.push(classification.toUpperCase());
@@ -61,7 +57,7 @@ module.exports = {
         let result = await insertGenre(genre);
 
         // load the created genre
-        result = await getGenreById(result.insertId);
+        result = await getGenresByParams(result.insertId, null, null);
         const created = result[0];
 
         return new Genre(
@@ -73,9 +69,9 @@ module.exports = {
         );
     },
 
-    getGenre: async id => {
+    getGenreById: async id => {
         // load the requested genre
-        const result = await getGenreById(id);
+        const result = await getGenresByParams(id, null, null);
         const loaded = result[0];
 
         return new Genre(
@@ -89,7 +85,7 @@ module.exports = {
 
     getGenres: async (classification, name) => {
         // load the requested genres
-        const result = await getGenresByParams(classification, name);
+        const result = await getGenresByParams(null, classification, name);
         const genres = [];
 
         result.forEach(element => {
@@ -116,7 +112,7 @@ module.exports = {
         }
         else {
             // load the updated genre
-            result = await getGenreById(genre.id);
+            result = await getGenresByParams(genre.id, null, null);
             const updated = result[0];
 
             return new Genre(

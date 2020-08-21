@@ -15,19 +15,16 @@ const insertUser = user => {
     return dbQuery(query, [email, password, roleId]);
 };
 
-const getUserById = id => {
-    const query = "SELECT user_id AS 'userId', email, password, created_at AS 'createdAt', "
-        + "updated_at AS 'updatedAt', role_id AS 'roleId' FROM users WHERE user_id = ?";
-
-    // execute a select query
-    return dbQuery(query, [id]);
-};
-
-const getUsersByParams = (email, roleId) => {
+const getUsersByParams = (id, email, roleId) => {
     const params = [];
 
     let query = "SELECT user_id AS 'userId', email, password, created_at AS 'createdAt', "
         + "updated_at AS 'updatedAt', role_id AS 'roleId' FROM users WHERE 1 = 1";
+
+    if (id !== null && id !== undefined) {
+        query += " AND user_id = ?";
+        params.push(id);
+    }
 
     if (email !== null && email !== undefined) {
         query += " AND UPPER(email) LIKE ?";
@@ -68,7 +65,7 @@ const getRoleById = id => {
 };
 
 const getUserWithPassword = email => {
-    const query = "SELECT user_id AS 'userId', email, password, created_at AS 'createdAt', " 
+    const query = "SELECT user_id AS 'userId', email, password, created_at AS 'createdAt', "
         + "updated_at AS 'updatedAt', role_id AS 'roleId' FROM users WHERE email = ?";
 
     // execute a select query
@@ -130,7 +127,7 @@ module.exports = {
         let result = await insertUser(user);
 
         // load the created user
-        result = await getUserById(result.insertId);
+        result = await getUsersByParams(result.insertId, null, null);
         const created = result[0];
 
         // get the role of the user
@@ -156,7 +153,7 @@ module.exports = {
 
     getUser: async id => {
         // load the requested user
-        let result = await getUserById(id);
+        let result = await getUsersByParams(id, null, null);
         const loaded = result[0];
 
         // get the role of the user
@@ -198,7 +195,7 @@ module.exports = {
 
     getUsers: async (email, roleId) => {
         // load the requested users
-        const result = await getUsersByParams(email, roleId);
+        const result = await getUsersByParams(null, email, roleId);
         const users = [];
         let role = {};
 
@@ -237,7 +234,7 @@ module.exports = {
         }
         else {
             // load the updated user
-            result = await getUserById(user.id);
+            result = await getUsersByParams(user.id, null, null);
             const updated = result[0];
 
             // get the role of the user

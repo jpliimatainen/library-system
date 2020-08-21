@@ -10,20 +10,16 @@ const insertAuthor = author => {
     return dbQuery(query, [firstname, lastname]);
 };
 
-const getAuthorById = id => {
-    const query = "SELECT author_id AS 'authorId', firstname, lastname, created_at "
-        + "AS 'createdAt', updated_at AS 'updatedAt' FROM authors WHERE author_id = ?";
-
-    // execute a select query
-    return dbQuery(query, [id]);
-};
-
-const getAuthorsByParams = (firstname, lastname) => {
+const getAuthorsByParams = (id, firstname, lastname) => {
     const params = [];
 
     let query = "SELECT author_id AS 'authorId', firstname, lastname, created_at "
         + "AS 'createdAt', updated_at AS 'updatedAt' FROM authors WHERE 1 = 1";
 
+    if (id !== null && id !== undefined) {
+        query += " AND author_id = ?";
+        params.push(id);
+    }
     if (firstname !== null && firstname !== undefined) {
         query += " AND UPPER(firstname) LIKE ?";
         params.push('%' + firstname.toUpperCase() + '%');
@@ -61,7 +57,7 @@ module.exports = {
         let result = await insertAuthor(author);
 
         // load the created author
-        result = await getAuthorById(result.insertId);
+        result = await getAuthorsByParams(result.insertId, null, null);
         const created = result[0];
 
         return new Author(
@@ -73,9 +69,9 @@ module.exports = {
         );
     },
 
-    getAuthor: async id => {
+    getAuthorById: async id => {
         // load the requested author
-        const result = await getAuthorById(id);
+        const result = await getAuthorsByParams(id, null, null);
         const loaded = result[0];
 
         return new Author(
@@ -89,7 +85,7 @@ module.exports = {
 
     getAuthors: async (firstname, lastname) => {
         // load the requested authors
-        const result = await getAuthorsByParams(firstname, lastname);
+        const result = await getAuthorsByParams(null, firstname, lastname);
         const authors = [];
 
         result.forEach(element => {
@@ -116,7 +112,7 @@ module.exports = {
         }
         else {
             // load the updated author
-            result = await getAuthorById(author.id);
+            result = await getAuthorsByParams(author.id, null, null);
             const updated = result[0];
 
             return new Author(

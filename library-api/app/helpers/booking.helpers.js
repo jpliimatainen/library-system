@@ -235,6 +235,8 @@ module.exports = {
         return bookings;
     },
 
+    //bookingsExist: async 
+
     updateBooking: async booking => {
         // update the booking
         let result = await editBooking(booking);

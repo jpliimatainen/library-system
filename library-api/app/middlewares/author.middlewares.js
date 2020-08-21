@@ -70,12 +70,13 @@ module.exports = {
         const id = req.params.authorId;
 
         try {
-            // load books of the author
-            const books = await bookHelpers.getBooks(null, null, id, null);
+            // get the number of books for the author
+            const count = await bookHelpers.getNumOfBooksByAuthor(id);
 
-            if (books.length > 0) { 
+            if (count > 0) { 
                 return res.status(400).json({ success: false, message: 'Book(s) exist(s) for the author!' });
             }
+            
             next();
         }
         catch (err) {

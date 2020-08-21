@@ -16,21 +16,17 @@ const insertCustomer = customer => {
     return dbQuery(query, [firstname, lastname, streetAddress, userId, postCode]);
 };
 
-const getCustomerById = id => {
-    const query = "SELECT customer_id AS 'customerId', firstname, lastname, street_address AS 'streetAdress', created_at AS 'createdAt', "
-        + "updated_at AS 'updatedAt', user_id AS 'userId', post_code AS 'postCode' FROM customers WHERE customer_id = ?";
-
-    // execute a select query
-    return dbQuery(query, [id]);
-};
-
-const getCustomersByParams = (email, firstname, lastname, streetAddress, postCode) => {
+const getCustomersByParams = (id, email, firstname, lastname, streetAddress, postCode) => {
     const params = [];
 
     let query = "SELECT c.customer_id AS 'customerId', c.firstname AS 'firstname', c.lastname AS 'lastname', c.street_address AS "
         + "'streetAddress', c.created_at AS 'createdAt', c.updated_at AS 'updatedAt', c.user_id AS 'userId', c.post_code AS 'postCode' "
         + "FROM customers c JOIN users u ON c.user_id = u.user_id WHERE 1 = 1";
 
+    if (id !== null && id !== undefined) {
+        query += " AND customer_id = ?";
+        params.push(id);
+    }
     if (email !== null && email !== undefined) {
         query += " AND UPPER(u.email) LIKE ?";
         params.push('%' + email.toUpperCase() + '%');
@@ -51,14 +47,14 @@ const getCustomersByParams = (email, firstname, lastname, streetAddress, postCod
         query += " AND post_code = ?";
         params.push(postCode);
     }
-
+    
     // execute a select query
     return dbQuery(query, params);
 };
 
 const editCustomer = customer => {
     const { firstname, lastname, streetAddress, postCode, id } = customer;
-    
+
     const query = "UPDATE customers SET firstname = ?, lastname = ?, street_address = ?, post_code = ?, "
         + "updated_at = CURRENT_TIMESTAMP() WHERE customer_id = ?";
 
@@ -87,6 +83,13 @@ const getUserIdByCustomerId = customerId => {
     return dbQuery(query, [customerId]);
 };
 
+const getCustomerIdByUserId = userId => {
+    const query = "SELECT customer_id AS 'customerId' FROM customers WHERE user_id = ?";
+
+    // execute a select query
+    return dbQuery(query, [userId]);
+};
+
 module.exports = {
 
     createCustomer: async customer => {
@@ -105,7 +108,7 @@ module.exports = {
         let result = await insertCustomer(customer);
 
         // load the created customer
-        result = await getCustomerById(result.insertId);
+        result = await getCustomersByParams(result.insertId, null, null, null, null, null);
         const created = result[0];
 
         // get the post object of the customer
@@ -129,18 +132,18 @@ module.exports = {
         );
     },
 
-    getCustomer: async id => {
+    getCustomerById: async id => {
         // load the requested customer
-        let result = await getCustomerById(id);
+        let result = await getCustomersByParams(id, null, null, null, null, null);
         const loaded = result[0];
-
+        
         // get the user object of the customer
         const user = await userHelpers.getUser(loaded.userId);
-
+        
         // get the post object of the customer
         result = await getPostByCode(loaded.postCode);
         const post = result[0];
-
+        
         return new Customer(
             loaded.customerId,
             loaded.firstname,
@@ -160,7 +163,7 @@ module.exports = {
 
     getCustomers: async (email, firstname, lastname, streetAddress, postCode) => {
         // load the requested customers
-        let result = await getCustomersByParams(email, firstname, lastname, streetAddress, postCode);
+        let result = await getCustomersByParams(null, email, firstname, lastname, streetAddress, postCode);
 
         const customers = [];
         let user, post = {};
@@ -195,9 +198,14 @@ module.exports = {
         return customers;
     },
 
+    fetchCustomerIdByUserId: async userId => {
+        const result = await getCustomerIdByUserId(userId);
+        return result[0].customerId;
+    },
+
     updateCustomer: async customer => {
         const { email, password, roleId } = customer.user;
-        
+
         // create a password hashed user object
         const inputUser = await userHelpers.createHashedUser(email, password, roleId);
 
@@ -210,13 +218,13 @@ module.exports = {
 
         // update the customer
         result = await editCustomer(customer);
-        
+
         if (result.affectedRows === 0) { // no affected rows
             return null;
         }
         else {
             // load the updated customer
-            result = await getCustomerById(customer.id);
+            result = await getCustomersByParams(customer.id, null, null, null, null, null);
             const updated = result[0];
 
             // get the post object of the customer
@@ -251,7 +259,7 @@ module.exports = {
         // delete the requested customer
         result = await removeCustomer(id);
         count = parseInt(result.affectedRows);
-        
+
         // delete the user
         result = await userHelpers.deleteUser(userId);
         count += parseInt(result.affectedRows);

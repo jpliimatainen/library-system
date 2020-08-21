@@ -25,7 +25,9 @@ module.exports = {
     },
 
     isAdmin: (req, res, next) => {
-        if (req.decoded !== null && req.decoded.role.id == 1) { // an admin
+        const { decoded } = req;
+
+        if (decoded !== null && decoded.role.id === 1) { // an admin
             next();
         }
         else {

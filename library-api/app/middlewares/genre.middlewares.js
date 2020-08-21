@@ -70,12 +70,13 @@ module.exports = {
         const id = req.params.genreId;
 
         try {
-            // load books of the genre
-            const books = await bookHelpers.getBooks(null, null, null, id);
+            // get the number of books for the genre
+            const count = await bookHelpers.getNumOfBooksByGenre(id);
 
-            if (books.length > 0) { 
+            if (count > 0) { 
                 return res.status(400).json({ success: false, message: 'Book(s) exist(s) for the genre!' });
             }
+            
             next();
         }
         catch (err) {
