@@ -269,7 +269,7 @@ module.exports = {
             );
         }
 
-        // not a role found
+        // no post code found
         return null;
     },
 };

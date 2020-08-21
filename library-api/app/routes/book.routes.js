@@ -9,7 +9,8 @@ router.route('/api/books')
     .get(ctrl.getBooks)
     .post(
         [
-            //authMiddlewares.validateToken,
+            authMiddlewares.validateToken,
+            authMiddlewares.isAdmin,
             bookMiddlewares.checkEmptyFields,
             bookMiddlewares.checkIntegrityErrors,
             bookMiddlewares.checkDuplicateBook
@@ -21,7 +22,8 @@ router.route('/api/books/:bookId')
     .get(ctrl.getBook)
     .put(
         [
-            //authMiddlewares.validateToken,
+            authMiddlewares.validateToken,
+            authMiddlewares.isAdmin,
             bookMiddlewares.checkBookIdMismatch,
             bookMiddlewares.checkEmptyFields,
             bookMiddlewares.checkIntegrityErrors,
@@ -30,7 +32,10 @@ router.route('/api/books/:bookId')
         ctrl.updateBook
     )
     .delete(
-        //[authMiddlewares.validateToken],
+        [
+            authMiddlewares.validateToken,
+            authMiddlewares.isAdmin
+        ],
         ctrl.deleteBook
     );
 

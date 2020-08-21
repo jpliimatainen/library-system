@@ -8,12 +8,16 @@ const userMiddlewares = require('../middlewares/user.middlewares');
 
 router.route('/api/customers')
     .get(
-        //[authMiddlewares.validateToken],
+        [
+            authMiddlewares.validateToken,
+            authMiddlewares.isAdmin
+        ],
         ctrl.getCustomers
     )
     .post(
         [
-            //authMiddlewares.validateToken,
+            authMiddlewares.validateToken,
+            authMiddlewares.isAdmin,
             customerMiddlewares.checkEmptyFields,
             userMiddlewares.checkInvalidEmail,
             userMiddlewares.checkInvalidPassword,
@@ -25,12 +29,14 @@ router.route('/api/customers')
 
 router.route('/api/customers/:customerId')
     .get(
-        //[authMiddlewares.validateToken],
+        [
+            authMiddlewares.validateToken
+        ],
         ctrl.getCustomer
     )
     .put(
         [
-            //authMiddlewares.validateToken,
+            authMiddlewares.validateToken,
             customerMiddlewares.checkCustomerIdMismatch,
             customerMiddlewares.checkEmptyFields,
             userMiddlewares.checkInvalidEmail,
@@ -42,8 +48,9 @@ router.route('/api/customers/:customerId')
     )
     .delete(
         [
-            //authMiddlewares.validateToken,
-            //customerMiddlewares.checkIntegrityError
+            authMiddlewares.validateToken,
+            authMiddlewares.isAdmin,
+            customerMiddlewares.checkIntegrityError
         ],
         ctrl.deleteCustomer
     );

@@ -13,14 +13,23 @@ module.exports = {
 
             jwt.verify(token, secret, (err, decoded) => {
                 if (err) {
-                    return res.status(401).json({ success: false, message: 'Authentication token is not valid!'})
+                    return res.status(401).json({ success: false, message: 'Authentication token is not valid!'});
                 }
                 req.decoded = decoded;
                 next();
             });
         }
         else {
-            return res.status(403).json({ success: false, message: 'Authentication token is not supplided!'})
+            return res.status(403).json({ success: false, message: 'Authentication token is not supplided!'});
+        }
+    },
+
+    isAdmin: (req, res, next) => {
+        if (req.decoded !== null && req.decoded.role.id == 1) { // an admin
+            next();
+        }
+        else {
+            return res.status(403).json({ success: false, message: 'You have no admin rights!'});
         }
     }
 };

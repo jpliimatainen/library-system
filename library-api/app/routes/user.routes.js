@@ -7,12 +7,16 @@ const userMiddlewares = require('../middlewares/user.middlewares');
 
 router.route('/api/users')
     .get(
-        //[authMiddlewares.validateToken],
+        [
+            authMiddlewares.validateToken,
+            authMiddlewares.isAdmin
+        ],
         ctrl.getUsers
     )
     .post(
         [
-            //authMiddlewares.validateToken,
+            authMiddlewares.validateToken,
+            authMiddlewares.isAdmin,
             userMiddlewares.checkEmptyFields,
             userMiddlewares.checkInvalidEmail,
             userMiddlewares.checkInvalidPassword,
@@ -24,12 +28,16 @@ router.route('/api/users')
 
 router.route('/api/users/:userId')
     .get(
-        //[authMiddlewares.validateToken],
+        [
+            authMiddlewares.validateToken,
+            authMiddlewares.isAdmin
+        ],
         ctrl.getUser
     )
     .put(
         [
-            //authMiddlewares.validateToken,
+            authMiddlewares.validateToken,
+            authMiddlewares.isAdmin,
             userMiddlewares.checkUserIdMismatch,
             userMiddlewares.checkEmptyFields,
             userMiddlewares.checkInvalidEmail,
@@ -41,15 +49,17 @@ router.route('/api/users/:userId')
     )
     .delete(
         [
-            //authMiddlewares.validateToken,
-            //userMiddlewares.checkIntegrityError
+            authMiddlewares.validateToken,
+            authMiddlewares.isAdmin
         ],
         ctrl.deleteUser
     );
 
 router.route('/api/users/login')
     .post(
-        [userMiddlewares.checkEmptyCredentials],
+        [
+            userMiddlewares.checkEmptyCredentials
+        ],
         ctrl.login
     );
 
